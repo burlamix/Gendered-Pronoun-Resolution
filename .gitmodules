@@ -1,0 +1,3 @@
+[submodule "gap-coreference"]
+	path = gap-coreference
+	url = https://github.com/google-research-datasets/gap-coreference
