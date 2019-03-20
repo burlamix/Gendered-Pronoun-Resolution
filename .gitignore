@@ -7,3 +7,6 @@ hltproject.egg-info
 #embeddings folder (computed)
 embeddings
 
+#compiled stuff
+*.py[cod]
+*__pycache__
