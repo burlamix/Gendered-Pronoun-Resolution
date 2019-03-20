@@ -1,4 +1,3 @@
-
 #setup folders
 build
 dist
@@ -10,3 +9,6 @@ embeddings
 #compiled stuff
 *.py[cod]
 *__pycache__
+
+#virtualenv stuff
+venv/
