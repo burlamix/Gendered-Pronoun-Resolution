@@ -1,0 +1,9 @@
+
+#setup folders
+build
+dist
+hltproject.egg-info
+
+#embeddings folder (computed)
+embeddings
+
