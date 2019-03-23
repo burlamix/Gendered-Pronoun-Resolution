@@ -2,12 +2,12 @@ import sys
 from scipy.spatial.distance import cosine
 import tqdm
 
-from dataset_utils.parsing import parse_embeddings_dataset
+from hltproject.dataset_utils.parsing import parse_embeddings_dataset
 
 _THRESHOLD = 0.1
 
-def compute_predictions ( train_fname, validation_fname, test_fname ):
-    with open(train_fname) as fin, open (train_fname+".cosine.submission", "w") as fout:
+def compute_predictions ( input_fname, output_fname ):
+    with open(input_fname) as fin, open (output_fname, "w") as fout:
         fout.write ("ID,A,B,NEITHER\n")
         for sent in tqdm.tqdm (parse_embeddings_dataset (fin)):
             vecA = sent.embeddings[sent.A_tok_off]
@@ -26,9 +26,16 @@ def compute_predictions ( train_fname, validation_fname, test_fname ):
 #            input()
 
             if score_A + score_B > 0:
-                prob_N = min ( 1-score_A, 1-score_B )
-                prob_A = score_A * ( 1-prob_N ) / ( score_A + score_B )
-                prob_B = 1 - prob_A - prob_N
+                prob_N = min ( 1-score_A, 1-score_B ) ** 4
+                score_A, score_B = score_A / (score_A+score_B), score_B / (score_A+score_B)
+                high = max ( score_A, score_B )
+                low = min ( score_A, score_B )
+                d = high - low
+                high = ( high + low*d ) * (1-prob_N)
+                low = ( low - low*d ) * (1-prob_N)
+                
+                prob_A, prob_B = (high, low) if score_A > score_B else (low, high)
+                
             else:
                 prob_N = 1
                 prob_B = 0

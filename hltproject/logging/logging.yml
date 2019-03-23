@@ -9,12 +9,7 @@ handlers:
     class: logging.StreamHandler
     formatter: simple
 loggers:
-  entropix.core:
+  hltproject:
     level: INFO
     handlers: [console]
-  entropix.main:
-    level: INFO
-    handlers: [console]
-  entropix.utils:
-    level: INFO
-    handlers: [console]
+  

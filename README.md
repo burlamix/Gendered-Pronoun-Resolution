@@ -18,4 +18,16 @@ Requires python version 3.6+
 	optional arguments:
 	  -h, --help            show this help message and exit
 	  -t TARGET, --target TARGET
-							target directory (default embeddings)
+							target directory (default: embeddings)
+
+### baselines
+
+	hltproject baseline-cosine [-h] [-t TARGET] test
+
+	positional arguments:
+	  test                  test filename
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -t TARGET, --target TARGET
+							target directory (default: predictions)

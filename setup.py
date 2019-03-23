@@ -21,7 +21,7 @@ setup(
     license='GPL 3.0',
     keywords=[],
     platforms=['any'],
-    packages=['hltproject', 'hltproject.dataset_utils'],
+    packages=['hltproject', 'hltproject.dataset_utils', 'hltproject.baseline', 'hltproject.logging'],
     package_data={'hltproject': ['logging/*.yml']},
     include_package_data=True,
     entry_points={
