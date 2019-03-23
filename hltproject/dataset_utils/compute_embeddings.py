@@ -23,17 +23,19 @@ import itertools
 
 from multiprocessing import Pool
 
+from hltproject.dataset_utils.parsing import parse_input_dataset
+
 def process_sentence (sent, elmo):
-    id, text, _, pron_off, A, A_off, A_coref, B, B_off, B_coref, _ = sent.split ('\t')
+    id, text, _, pron_off, A, A_off, A_coref, B, B_off, B_coref, _ = sent
                         
     A_token = A.replace (" ", "_")
     B_token = B.replace (" ", "_")
 
     text = text.replace (A, A_token).replace (B, B_token)
     
-    A_tok_off = re.subn ('\\s', '', text[:int(A_off)])[1]
-    B_tok_off = re.subn ('\\s', '', text[:int(B_off)])[1]
-    pron_tok_off = re.subn ('\\s', '', text[:int(pron_off)])[1]
+    A_tok_off = re.subn ('\\s', '', text[:A_off])[1]
+    B_tok_off = re.subn ('\\s', '', text[:B_off])[1]
+    pron_tok_off = re.subn ('\\s', '', text[:pron_off])[1]
     
     tokens = text.split ()
     vectors = elmo.embed_sentence(tokens)
@@ -53,16 +55,15 @@ def compute_embeddings ( input_fname, output_fname ):
         fouts.append (fout)
 		
     with open (input_fname) as fin:
-        next(fin) # discard first line
         
         with Pool ( processes=4 ) as pool:
-            #for tokens, vectors, id, A_tok_off, A_coref, B_tok_off, B_coref, pron_tok_off in tqdm.tqdm (pool.map (process_sentence, fin)):
-            for tokens, vectors, id, A_tok_off, A_coref, B_tok_off, B_coref, pron_tok_off in tqdm.tqdm (map (process_sentence, fin, itertools.cycle([elmo]))):
-                
+            #~ for tokens, vectors, id, A_tok_off, A_coref, B_tok_off, B_coref, pron_tok_off in tqdm.tqdm (map (process_sentence, fin, itertools.cycle([elmo]))):
+            for tokens, vectors, id, A_tok_off, A_coref, B_tok_off, B_coref, pron_tok_off in tqdm.tqdm (map (process_sentence, parse_input_dataset(fin), itertools.cycle([elmo]))):
+            
                 for i in (0,1,2):
-                    fouts[i].write ( '\t'.join((id, str(pron_tok_off), str(A_tok_off), A_coref, str(B_tok_off), B_coref))+'\n' )
+                    fouts[i].write ( '\t'.join((id, str(pron_tok_off), str(A_tok_off), str(A_coref), str(B_tok_off), str(B_coref)))+'\n' )
                     for tok, vec in zip (tokens, vectors[i]):
-                        fouts[i].write (tok + '\t' + ' ' .join( str(x) for x in vec )+'\n' )
+                        fouts[i].write (tok + '\t' + ' '.join( str(x) for x in vec )+'\n' )
                     fouts[i].write ('\n')
 
 

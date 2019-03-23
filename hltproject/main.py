@@ -12,6 +12,7 @@ import hltproject.utils.config as cutils
 
 from hltproject.dataset_utils.compute_embeddings import compute_embeddings
 from hltproject.baseline import baseline_cosine
+from hltproject.score.score import compute_loss
 
 logging.config.dictConfig(
     cutils.load_logger_config_file())
@@ -32,6 +33,19 @@ def output_directory ( dirname ):
     os.makedirs (dirname, exist_ok=True)
     return dirname
     
+def existing_file ( filename ):
+    '''
+     validates a name to be used as input file
+     
+     \param filename name of a file to be used as input file
+
+     if filename does not exist, raises an error
+     if filename exists and it is not a file, raises an error
+    '''
+    if not os.path.isfile (filename):
+        raise argparse.ArgumentTypeError ("{} does not exist or it is not a file".format(filename))
+    return filename
+    
 
 def _cosine ( args ):
     input_fname = args.test
@@ -45,6 +59,13 @@ def _compute_embeddings ( args ):
     logger.info ("Computing ELMo embeddings. input file: {}, output base file: {}".format(input_fname, output_fname))
     compute_embeddings ( input_fname, output_fname )
 
+def _loss ( args ):
+    model_fname = args.model
+    gold_fname = args.input
+    logger.info ("Computing loss for predictions: {}, original input file: {}".format(model_fname, gold_fname))
+    compute_loss ( model_fname, gold_fname )
+    
+
 def main():
     parser = argparse.ArgumentParser(prog='hltproject')
     subparsers = parser.add_subparsers()
@@ -52,7 +73,7 @@ def main():
     parser_compute_embeddings = subparsers.add_parser(
         'compute-embeddings', formatter_class=argparse.RawTextHelpFormatter,
         help='compute elmo embeddings of a given input dataset')
-    parser_compute_embeddings.add_argument ('input', help='input filename')
+    parser_compute_embeddings.add_argument ('input', help='input filename', type=existing_file)
     parser_compute_embeddings.add_argument('-t', '--target', default='embeddings',
                         type=output_directory,        
                         help='target directory (default: embeddings)')
@@ -66,6 +87,13 @@ def main():
                             type=output_directory,
                             help='target directory (default: predictions)')
     parser_cosine.set_defaults(func=_cosine)
+    
+    parser_loss = subparsers.add_parser(
+        'loss', formatter_class=argparse.RawTextHelpFormatter,
+        help='compute loss for one prediction')
+    parser_loss.add_argument ('model', help='model predictions', type=existing_file)
+    parser_loss.add_argument ('input', help='input dataset', type=existing_file)
+    parser_loss.set_defaults(func=_loss)
     
     args = parser.parse_args()
     args.func(args)

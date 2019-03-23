@@ -31,3 +31,13 @@ Requires python version 3.6+
 	  -h, --help            show this help message and exit
 	  -t TARGET, --target TARGET
 							target directory (default: predictions)
+
+### computing loss for a prediction
+	hltproject loss [-h] model input
+
+	positional arguments:
+	  model       model predictions
+	  input       input dataset
+
+	optional arguments:
+	  -h, --help  show this help message and exit
