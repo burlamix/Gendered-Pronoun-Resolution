@@ -9,7 +9,8 @@ import math
 
 logging.config.dictConfig(
     cutils.load_logger_config_file())
-logger = logging.getLogger ( __name__ )        
+logger = logging.getLogger ( __name__ )
+
 
 def compute_loss ( model_fname, input_fname ):
     

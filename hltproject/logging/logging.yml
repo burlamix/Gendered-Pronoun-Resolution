@@ -10,6 +10,6 @@ handlers:
     formatter: simple
 loggers:
   hltproject:
-    level: INFO
+    level: DEBUG
     handlers: [console]
   
