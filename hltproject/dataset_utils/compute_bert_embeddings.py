@@ -136,7 +136,7 @@ def run_bert(data):
 
 	return emb
 
-def compute_bert_embeddings ( input_fname, output_fname ):
+def compute_bert_embeddings_brutal ( input_fname, output_fname ):
 
 	print("------------------\n\n\n\n\n\n")
 	print(os.getcwd())
@@ -147,21 +147,25 @@ def compute_bert_embeddings ( input_fname, output_fname ):
 	test_emb.to_json(output_fname, orient = 'columns')
 
 
-def compute_b (input_fname, output_fname):
+def compute_bert_embeddings (input_fname, output_fname):
 
 	test_data = pd.read_csv(input_fname, sep = '\t')
 	text = test_data["Text"]
 	text.to_csv("input.txt", index = False, header = False)
 
-	extract_bert_feature(input_file="input.txt",vocab_file="../utils/uncased_L-12_H-768_A-12/vocab.txt",
-		bert_config_file="../utils/uncased_L-12_H-768_A-12/bert_config.json",
-			init_checkpoint="../utils/uncased_L-12_H-768_A-12/bert_model.ckpt",output_file=output_fname,
+	print(os.getcwd())
+	print("\n\n")
+	extract_bert_feature(input_file="input.txt",vocab_file="hltproject/utils/uncased_L-12_H-768_A-12/vocab.txt",
+		bert_config_file="hltproject/utils/uncased_L-12_H-768_A-12/bert_config.json",
+			init_checkpoint="hltproject/utils/uncased_L-12_H-768_A-12/bert_model.ckpt",output_file=output_fname,
             	layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=256,
             		use_tpu=False,use_one_hot_embeddings=False,batch_size=32)
 
-print("\n\n\n\n\n\n")
 
+if __name__ == "__main__":
+    output_fname = sys.argv[2] + '/' + os.path.basename (sys.argv[1]) if len(sys.argv)>=3 else sys.argv[1]
+    compute_embeddings ( sys.argv[1], output_fname )
 
-compute_b("../datasets/gap-light.tsv","output_x.jsonl")
+#compute_b("../datasets/gap-light.tsv","output_x.jsonl")
 
-print("\n\n\n\n\n\n---------END---------\n\n\n\n\n\n")
+#print("\n\n\n\n\n\n---------END---------\n\n\n\n\n\n")

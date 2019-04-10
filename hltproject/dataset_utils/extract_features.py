@@ -394,34 +394,34 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
   input_fn = input_fn_builder(
       features=features, seq_length=max_seq_length)
 
-  fout = open ( "embeddings_____________t", "w")
+  fout = open ( output_file, "w")
 
-  with codecs.getwriter("utf-8")(tf.gfile.Open(output_file,
-                                               "w")) as writer:
-    for result in estimator.predict(input_fn, yield_single_examples=True):
-      unique_id = int(result["unique_id"])
-      feature = unique_id_to_feature[unique_id]
-      output_json = collections.OrderedDict()
-      output_json["linex_index"] = unique_id
-      all_features = []
-      for (i, token) in enumerate(feature.tokens):
-        all_layers = []
-        for (j, layer_index) in enumerate(layer_indexes):
-          layer_output = result["layer_output_%d" % j]
-          layers = collections.OrderedDict()
-          layers["index"] = layer_index
-          layers["values"] = [
-              round(float(x), 6) for x in layer_output[i:(i + 1)].flat
-          ]
-          all_layers.append(layers)
-        features = collections.OrderedDict()
-        features["token"] = token
-        features["layers"] = all_layers
-        all_features.append(features)
-        fout.write (token + '\t' + ' '.join( str(x) for x in layers["values"] )+'\n' )
+  #with codecs.getwriter("utf-8")(tf.gfile.Open(output_file,
+  #                                             "w")) as writer:
+  for result in estimator.predict(input_fn, yield_single_examples=True):
+    unique_id = int(result["unique_id"])
+    feature = unique_id_to_feature[unique_id]
+    output_json = collections.OrderedDict()
+    output_json["linex_index"] = unique_id
+    all_features = []
+    for (i, token) in enumerate(feature.tokens):
+      all_layers = []
+      for (j, layer_index) in enumerate(layer_indexes):
+        layer_output = result["layer_output_%d" % j]
+        layers = collections.OrderedDict()
+        layers["index"] = layer_index
+        layers["values"] = [
+            round(float(x), 6) for x in layer_output[i:(i + 1)].flat
+        ]
+        all_layers.append(layers)
+      features = collections.OrderedDict()
+      features["token"] = token
+      features["layers"] = all_layers
+      all_features.append(features)
+      fout.write (token + '\t' + ' '.join( str(x) for x in layers["values"] )+'\n' )
 
-      output_json["features"] = all_features
-      writer.write(json.dumps(output_json) + "\n")
+    output_json["features"] = all_features
+      #writer.write(json.dumps(output_json) + "\n")
 
 
 
