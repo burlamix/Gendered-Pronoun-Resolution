@@ -25,6 +25,8 @@ import re
 
 import modeling
 import tokenization
+from tokenization import _is_punctuation
+
 import tensorflow as tf
 
 flags = tf.flags
@@ -207,12 +209,111 @@ def model_fn_builder(bert_config, init_checkpoint, layer_indexes, use_tpu,
   return model_fn
 
 
-def convert_examples_to_features(examples, seq_length, tokenizer):
+def find_correct_offset(line_info,tokens_a):
+    #print(line_info[1])
+    #print("\n")
+    #print(line_info[1][1],line_info[1][2])
+
+    print(line_info[1])
+    print(line_info[1][1])
+    print(line_info[1][1][line_info[1][3]]+"-"+line_info[1][2])
+    print(line_info[1][1][line_info[1][5]]+"-"+line_info[1][4])
+    print(line_info[1][1][line_info[1][8]]+"-"+line_info[1][7])
+
+
+    total_length =0
+    for token in tokens_a:
+      #print(token)
+      #prendo la lunghezza e controllo di non aver passato le robe
+      #se trovo un # e sono prima di una roba, aumento l'offset della roba di 3
+
+      length = len(token)
+      total_length=total_length+length+1
+
+      if ("#" in token):
+        if (total_length<=line_info[1][3]):
+          line_info[1][3]=line_info[1][3]+3
+
+        if(total_length<=line_info[1][5]):
+          line_info[1][5]=line_info[1][5]+3
+
+        if(total_length<=line_info[1][8]):
+          line_info[1][8]=line_info[1][8]+3
+
+      #if ("," in token):
+      if ( len(token)==1 and _is_punctuation(token)):
+        print("+++++"+token)
+        if (total_length<=line_info[1][3]):
+          line_info[1][3]=line_info[1][3]+1
+          
+        if(total_length<=line_info[1][5]):
+          line_info[1][5]=line_info[1][5]+1
+
+        if(total_length<=line_info[1][8]):
+          line_info[1][8]=line_info[1][8]+1
+
+    print(line_info[1][1])
+  
+    print("\n")
+    print(tokens_a)
+    print("\n")
+
+    join = " ".join(tokens_a)
+    print(join)
+    print("\n")
+
+    print("------"+join[line_info[1][3]]+join[line_info[1][3]+1]+join[line_info[1][3]+2]+join[line_info[1][3]+3]+join[line_info[1][3]+4]+"-"+line_info[1][2])
+    print("------"+join[line_info[1][5]]+join[line_info[1][5]+1]+join[line_info[1][5]+2]+join[line_info[1][5]+3]+"-"+line_info[1][4])
+    print("------"+join[line_info[1][8]]+join[line_info[1][8]+1]+join[line_info[1][8]+2]+"-"+line_info[1][7])
+
+
+    return line_info
+
+
+
+#here is the place where we have both the sentence before the tokenization (without ## and con the corresponding correct lengt of the promoum)
+
+def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
   """Loads a data file into a list of `InputBatch`s."""
+  info_data_iterator=info_data.iterrows()
+
+
 
   features = []
   for (ex_index, example) in enumerate(examples):
+
+    # remove quote
+    example.text_a=example.text_a[1:-1]
+
     tokens_a = tokenizer.tokenize(example.text_a)
+
+    
+    line_info = next(info_data_iterator)
+    '''
+        ID                                                           test-9
+    Text              On June 4, 1973 at the Felt Forum, Madison Squ...
+    Pronoun                                                          he
+    Pronoun-offset                                                  227
+    A                                                            Malave
+    A-offset                                                        124
+    A-coref                                                        True
+    B                                                       Greg Joiner
+    B-offset                                                        169
+    B-coref                                                       False
+    URL                       http://en.wikipedia.org/wiki/Edwin_Malave
+    '''
+
+
+    #print(line_info[1])
+    #print("\n")
+    #print(line_info[1][1],line_info[1][2])
+
+    #print(example.text_a)
+    #print(tokens_a)
+    print("\n\n\n\n")
+
+    find_correct_offset(line_info,tokens_a)
+
 
     tokens_b = None
     if example.text_b:
@@ -315,7 +416,7 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
     else:
       tokens_b.pop()
 
-
+# ss this function only need the list of string of each sentence, it just read the file and put each sentence in an object
 def read_examples(input_file):
   """Read a list of `InputExample`s from an input file."""
   examples = []
@@ -346,7 +447,7 @@ def read_examples(input_file):
   flags.mark_flag_as_required("init_checkpoint")
   flags.mark_flag_as_required("output_file")
 
-def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,output_file,
+def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,output_file, info_data,
             layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=256,use_tpu=False,use_one_hot_embeddings=False,batch_size=32,):
   tf.logging.set_verbosity(tf.logging.INFO)
 
@@ -357,7 +458,11 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
   tokenizer = tokenization.FullTokenizer(
       vocab_file=vocab_file, do_lower_case=do_lower_case)
 
+  print("\n")
+  print("setting tokenizer and config")
+  
   is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
+
   run_config = tf.contrib.tpu.RunConfig(
       master=master,
       tpu_config=tf.contrib.tpu.TPUConfig(
@@ -366,12 +471,20 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
 
   examples = read_examples(input_file)
 
+  print("\n")
+<<<<<<< HEAD
+  print(examples)
+=======
+>>>>>>> 01ae7f2e2044e0df5353418e8971e02f4812b2f3
+  print("run config and read examples")
+  
   features = convert_examples_to_features(
-      examples=examples, seq_length=max_seq_length, tokenizer=tokenizer)
+      examples=examples, seq_length=max_seq_length, tokenizer=tokenizer,info_data=info_data)
 
-  print("\n\n\n\n")
-  print(features)
 
+  print("\n")
+  print("convert example to feature")
+  
   unique_id_to_feature = {}
   for feature in features:
     unique_id_to_feature[feature.unique_id] = feature
@@ -383,6 +496,9 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
       use_tpu=use_tpu,
       use_one_hot_embeddings=use_one_hot_embeddings)
 
+  print("\n")
+  print("fn model build")
+  
   # If TPU is not available, this will fall back to normal Estimator on CPU
   # or GPU.
   estimator = tf.contrib.tpu.TPUEstimator(
@@ -391,14 +507,22 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
       config=run_config,
       predict_batch_size=batch_size)
 
+  print("\n")
+  print("create the estimator")
+  
   input_fn = input_fn_builder(
       features=features, seq_length=max_seq_length)
 
-  fout = open ( output_file, "w")
+  print("\n")
+  print("fn builder")
+
+  
+
 
   #with codecs.getwriter("utf-8")(tf.gfile.Open(output_file,
   #                                             "w")) as writer:
   for result in estimator.predict(input_fn, yield_single_examples=True):
+    print(result["unique_id"])
     unique_id = int(result["unique_id"])
     feature = unique_id_to_feature[unique_id]
     output_json = collections.OrderedDict()
@@ -418,7 +542,9 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
       features["token"] = token
       features["layers"] = all_layers
       all_features.append(features)
-      fout.write (token + '\t' + ' '.join( str(x) for x in layers["values"] )+'\n' )
+
+      with open(output_file, 'a') as fout:
+        fout.write (token + '\t' + ' '.join( str(x) for x in layers["values"] )+'\n' )
 
     output_json["features"] = all_features
       #writer.write(json.dumps(output_json) + "\n")

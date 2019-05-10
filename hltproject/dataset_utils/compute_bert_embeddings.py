@@ -159,7 +159,7 @@ def compute_bert_embeddings (input_fname, output_fname):
 		bert_config_file="hltproject/utils/uncased_L-12_H-768_A-12/bert_config.json",
 			init_checkpoint="hltproject/utils/uncased_L-12_H-768_A-12/bert_model.ckpt",output_file=output_fname,
             	layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=256,
-            		use_tpu=False,use_one_hot_embeddings=False,batch_size=32)
+            		use_tpu=False,use_one_hot_embeddings=False,batch_size=32,info_data=test_data)
 
 
 if __name__ == "__main__":
