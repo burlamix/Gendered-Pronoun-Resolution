@@ -1,2 +1,6 @@
 pandas
 allennlp
+spacy
+torch
+tensorboardX
+tensorflow
