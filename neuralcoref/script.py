@@ -12,7 +12,11 @@ def coref(txt):
   return r.json()
 
 
-with open("gap-validation.tsv") as tsvfile:
+tp = "test"
+file = "gap-"+tp+".tsv"
+folder = "json_"+tp
+
+with open(file) as tsvfile:
   reader = csv.DictReader(tsvfile, dialect='excel-tab')
   for row in reader:
 
@@ -32,6 +36,11 @@ with open("gap-validation.tsv") as tsvfile:
 
     result = coref(text)
 
+    with open(folder + "/" + row["ID"] + ".json","w") as f:
+      print(folder + "/" + row["ID"] + ".json")
+      f.write(str(result))
+
+'''
     if "mentions" in result:
       for mention in result["mentions"]:
         if mention["start"] <= pronoun_offset < mention["end"]:
@@ -57,3 +66,4 @@ with open("gap-validation.tsv") as tsvfile:
         B_score = result["pairScores"][str(B_idx)][str(pronoun_idx)]
 
     print(row["ID"], A_score, B_score)
+'''
