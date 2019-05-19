@@ -12,7 +12,7 @@ def coref(txt):
   return r.json()
 
 
-tp = "test"
+tp = "stage2"
 file = "gap-"+tp+".tsv"
 folder = "json_"+tp
 
