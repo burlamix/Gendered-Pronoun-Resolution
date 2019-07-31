@@ -169,8 +169,16 @@ class FullTokenizer(object):
 
   def tokenize(self, text):
     split_tokens = []
-    for token in self.basic_tokenizer.tokenize(text):
+    for token in self.basic_tokenizer.tokenize(text):                             #qui tokenizza sugli spazi, dopo tokenizza sulle parole del dizonario
+      fa=0
       for sub_token in self.wordpiece_tokenizer.tokenize(token):
+        
+       
+        #if(fa>0):
+          #print(sub_token)
+         # print("\n") 
+        #fa=fa+1
+
         split_tokens.append(sub_token)
 
     return split_tokens

@@ -287,7 +287,11 @@ def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
 
     tokens_a = tokenizer.tokenize(example.text_a)
 
-    
+
+
+
+    #print(mod_s[new_b_off])
+
     line_info = next(info_data_iterator)
     '''
         ID                                                           test-9
@@ -310,9 +314,9 @@ def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
 
     #print(example.text_a)
     #print(tokens_a)
-    print("\n\n\n\n")
+    #print("\n\n\n\n")
 
-    find_correct_offset(line_info,tokens_a)
+    #find_correct_offset(line_info,tokens_a)
 
 
     tokens_b = None
@@ -471,11 +475,8 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
 
   examples = read_examples(input_file)
 
-  print("\n")
-<<<<<<< HEAD
-  print(examples)
-=======
->>>>>>> 01ae7f2e2044e0df5353418e8971e02f4812b2f3
+  print("\n\n")
+  #print(examples)
   print("run config and read examples")
   
   features = convert_examples_to_features(
@@ -518,13 +519,54 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
 
   
 
-
   #with codecs.getwriter("utf-8")(tf.gfile.Open(output_file,
   #                                             "w")) as writer:
+  k=0
+  with open(output_file, 'a') as fout:
+    fout.write ("ID Pronoun-tok-offset  A-tok-offset  A-coref B-tok-offset  B-coref\n")
+
+
+
+
   for result in estimator.predict(input_fn, yield_single_examples=True):
-    print(result["unique_id"])
+    
+    #print( info_data["ID"][k] )
+    #print( info_data["B-offset"][k] )
+
+    #print(info_data["Text"][k][info_data["B-offset"][k]])
+    
+
+
     unique_id = int(result["unique_id"])
     feature = unique_id_to_feature[unique_id]
+
+
+    #print("\n\n\n\n\n--------")
+    mod_s = " ".join(feature.tokens)
+    
+    #print(mod_s)
+    new_a_off = mod_s.find("a1")
+    new_b_off = mod_s.find("b1")
+
+    info_data.at[k,"A-offset"]=new_a_off
+    info_data.at[k,"B-offset"]=new_b_off
+
+
+    with open(output_file, 'a') as fout:
+        fout.write (     info_data["ID"][k] +"  "+
+                        str( info_data["Pronoun-offset"][k] )+"  "+
+                        str( info_data["A-offset"][k] )+"  "+
+                        str( info_data["A-coref"][k] )+"  "+
+                        str( info_data["B-offset"][k] )+"  "+
+                        str( info_data["B-coref"][k] )+"\n"
+                                                             )
+
+
+
+    
+ #   print( mod_s[info_data["B-offset"][k]])
+ #   print("\n")
+
     output_json = collections.OrderedDict()
     output_json["linex_index"] = unique_id
     all_features = []
@@ -548,6 +590,7 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
 
     output_json["features"] = all_features
       #writer.write(json.dumps(output_json) + "\n")
+    k=k+1
 
 
 

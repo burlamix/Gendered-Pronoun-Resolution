@@ -146,11 +146,41 @@ def compute_bert_embeddings_brutal ( input_fname, output_fname ):
 	test_emb = run_bert(test_data)
 	test_emb.to_json(output_fname, orient = 'columns')
 
-
+	'''
+		0 ID                                                           test-9
+		1 Text              On June 4, 1973 at the Felt Forum, Madison Squ...
+		2 Pronoun                                                          he
+		3 Pronoun-offset                                                  227
+		4 A                                                            Malave
+		5 A-offset                                                        124
+		6 A-coref                                                        True
+		7 B                                                       Greg Joiner
+		8 B-offset                                                        169
+		9 B-coref                                                       False
+		10 URL                       http://en.wikipedia.org/wiki/Edwin_Malave
+	'''
 def compute_bert_embeddings (input_fname, output_fname):
 
 	test_data = pd.read_csv(input_fname, sep = '\t')
+	for index, row in test_data.iterrows():
+		size_a = len(row[4])
+		size_b = len(row[7])
+
+		mod= row[1][:row[8]] + "B1" +  row[1][row[8]+size_b:] 
+		mod= mod[:row[5]] + "A1" +  mod[row[5]+size_a:] 
+
+		test_data.at[index,"Text"]=mod
+		
+		new_a_off = mod.find("A1")
+		new_b_off = mod.find("B1")
+
+		test_data.at[index,"A-offset"]=new_a_off
+		test_data.at[index,"B-offset"]=new_b_off
+
+
 	text = test_data["Text"]
+
+
 	text.to_csv("input.txt", index = False, header = False)
 
 	print(os.getcwd())
