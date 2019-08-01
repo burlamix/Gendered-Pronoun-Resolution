@@ -2,6 +2,6 @@
 
 source venv/bin/active
 
-pip install -r requirements.txt
-pip install spacy && python -m spacy download en
-jupiter lab
+pip install --user -r requirements.txt
+pip install --user spacy && python -m spacy download en
+jupyter lab

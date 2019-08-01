@@ -48,14 +48,17 @@ def existing_file ( filename ):
     return filename
 
 def _supervised ( args ):
+    augment = args.augment
     train_fname = args.train
     validation_fname = args.validation
     test_fname = args.test
     output_fname = args.target + '/' + os.path.basename ( args.test ) + '.supervised_predictions'
     logger.info ("Computing predictions using supervised model.")
     logger.info (" input files: train {}, validation {} test {}".format(train_fname, validation_fname, test_fname) )
+    augment_message = " input will " + ("" if args.augment else "not ") + "be augmented with pairwise dot products"
+    logger.info ( augment_message )
     logger.info (" output file: {}".format(output_fname))
-    baseline_supervised.compute_predictions ( train_fname, validation_fname, test_fname, output_fname )
+    baseline_supervised.compute_predictions ( train_fname, validation_fname, test_fname, augment, output_fname )
     
 
 def _cosine ( args ):
@@ -105,6 +108,9 @@ def main():
     parser_supervised.add_argument ('train', help='train filename', type=existing_file)
     parser_supervised.add_argument ('validation', help='validation filename', type=existing_file)
     parser_supervised.add_argument ('test', help='test filename', type=existing_file)
+    parser_supervised.add_argument('-g', '--augment', default=False,
+                            action="store_true",
+                            help='whether to augment input feature adding pairwise dot product or not')
     parser_supervised.add_argument('-t', '--target', default='predictions',
                             type=output_directory,
                             help='target directory (default: predictions)')
