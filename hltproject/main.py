@@ -11,6 +11,7 @@ import logging.config
 import hltproject.utils.config as cutils
 
 from hltproject.dataset_utils.compute_embeddings import compute_embeddings
+from hltproject.dataset_utils.compute_bert_embeddings import compute_bert_embeddings
 from hltproject.baseline import baseline_cosine
 from hltproject.baseline import baseline_supervised
 from hltproject.score.score import compute_loss
@@ -73,6 +74,12 @@ def _compute_embeddings ( args ):
     logger.info ("Computing ELMo embeddings. input file: {}, output base file: {}".format(input_fname, output_fname))
     compute_embeddings ( input_fname, output_fname )
 
+def _compute_bert_embeddings ( args ):
+    input_fname = args.input
+    output_fname = args.target + '/' + os.path.basename ( args.input )
+    logger.info ("Computing BERT embeddings. input file: {}, output base file: {}".format(input_fname, output_fname))
+    compute_bert_embeddings ( input_fname, output_fname )
+
 def _loss ( args ):
     model_fname = args.model
     gold_fname = args.input
@@ -83,6 +90,9 @@ def _loss ( args ):
 def main():
     parser = argparse.ArgumentParser(prog='hltproject')
     subparsers = parser.add_subparsers()
+
+
+
                               
     parser_compute_embeddings = subparsers.add_parser(
         'compute-embeddings', formatter_class=argparse.RawTextHelpFormatter,
@@ -92,6 +102,23 @@ def main():
                         type=output_directory,        
                         help='target directory (default: embeddings)')
     parser_compute_embeddings.set_defaults(func=_compute_embeddings)
+
+
+    parser_compute_bert_embeddings = subparsers.add_parser(
+        'compute-bert-embeddings', formatter_class=argparse.RawTextHelpFormatter,
+        help='compute bert embeddings of a given input dataset')
+    parser_compute_bert_embeddings.add_argument ('input', help='input filename', type=existing_file)
+    parser_compute_bert_embeddings.add_argument('-t', '--target', default='bert-embeddings',
+                        type=output_directory,        
+                        help='target directory (default: bert-embeddings)')
+    parser_compute_bert_embeddings.set_defaults(func=_compute_bert_embeddings)
+
+
+
+
+
+
+
     
     parser_cosine = subparsers.add_parser(
         'baseline-cosine', formatter_class=argparse.RawTextHelpFormatter,
