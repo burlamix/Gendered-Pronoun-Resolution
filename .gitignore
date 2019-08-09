@@ -5,6 +5,8 @@ hltproject.egg-info
 
 #embeddings folder (computed)
 embeddings
+bert-embeddings
+utils
 
 #compiled stuff
 *.py[cod]

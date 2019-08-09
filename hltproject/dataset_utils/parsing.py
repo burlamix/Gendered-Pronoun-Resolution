@@ -34,8 +34,19 @@ def parse_embeddings_dataset ( fname ):
             yield sent
         elif first:
             first = False
+            print("\n\n")
+            print(line)
             # input()
             id, po, Ao, Ac, Bo, Bc = line.split ('\t')
+
+            #print(id)
+            #print(po)
+            #print(Ao)
+            #print(Ac)
+            #print(Bo)
+            #print(Bc)
+            
+
             toks = []
             embs = []
         else:

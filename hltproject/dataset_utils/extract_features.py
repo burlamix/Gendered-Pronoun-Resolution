@@ -45,7 +45,7 @@ flags.DEFINE_string(
     "This specifies the model architecture.")
 
 flags.DEFINE_integer(
-    "max_seq_length", 128,
+    "max_seq_length", 500,
     "The maximum total input sequence length after WordPiece tokenization. "
     "Sequences longer than this will be truncated, and sequences shorter "
     "than this will be padded.")
@@ -209,68 +209,6 @@ def model_fn_builder(bert_config, init_checkpoint, layer_indexes, use_tpu,
   return model_fn
 
 
-def find_correct_offset(line_info,tokens_a):
-    #print(line_info[1])
-    #print("\n")
-    #print(line_info[1][1],line_info[1][2])
-
-    print(line_info[1])
-    print(line_info[1][1])
-    print(line_info[1][1][line_info[1][3]]+"-"+line_info[1][2])
-    print(line_info[1][1][line_info[1][5]]+"-"+line_info[1][4])
-    print(line_info[1][1][line_info[1][8]]+"-"+line_info[1][7])
-
-
-    total_length =0
-    for token in tokens_a:
-      #print(token)
-      #prendo la lunghezza e controllo di non aver passato le robe
-      #se trovo un # e sono prima di una roba, aumento l'offset della roba di 3
-
-      length = len(token)
-      total_length=total_length+length+1
-
-      if ("#" in token):
-        if (total_length<=line_info[1][3]):
-          line_info[1][3]=line_info[1][3]+3
-
-        if(total_length<=line_info[1][5]):
-          line_info[1][5]=line_info[1][5]+3
-
-        if(total_length<=line_info[1][8]):
-          line_info[1][8]=line_info[1][8]+3
-
-      #if ("," in token):
-      if ( len(token)==1 and _is_punctuation(token)):
-        print("+++++"+token)
-        if (total_length<=line_info[1][3]):
-          line_info[1][3]=line_info[1][3]+1
-          
-        if(total_length<=line_info[1][5]):
-          line_info[1][5]=line_info[1][5]+1
-
-        if(total_length<=line_info[1][8]):
-          line_info[1][8]=line_info[1][8]+1
-
-    print(line_info[1][1])
-  
-    print("\n")
-    print(tokens_a)
-    print("\n")
-
-    join = " ".join(tokens_a)
-    print(join)
-    print("\n")
-
-    print("------"+join[line_info[1][3]]+join[line_info[1][3]+1]+join[line_info[1][3]+2]+join[line_info[1][3]+3]+join[line_info[1][3]+4]+"-"+line_info[1][2])
-    print("------"+join[line_info[1][5]]+join[line_info[1][5]+1]+join[line_info[1][5]+2]+join[line_info[1][5]+3]+"-"+line_info[1][4])
-    print("------"+join[line_info[1][8]]+join[line_info[1][8]+1]+join[line_info[1][8]+2]+"-"+line_info[1][7])
-
-
-    return line_info
-
-
-
 #here is the place where we have both the sentence before the tokenization (without ## and con the corresponding correct lengt of the promoum)
 
 def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
@@ -278,10 +216,8 @@ def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
   info_data_iterator=info_data.iterrows()
 
 
-
   features = []
   for (ex_index, example) in enumerate(examples):
-
     # remove quote
     example.text_a=example.text_a[1:-1]
 
@@ -384,6 +320,20 @@ def convert_examples_to_features(examples, seq_length, tokenizer,info_data):
     assert len(input_mask) == seq_length
     assert len(input_type_ids) == seq_length
 
+    #print(info_data["Pronoun"][ik])
+    #print(info_data["A"][ik])
+    """
+    ikk=0
+    for x in tokens:
+      if(x=="a1"):
+        info_data["A-offset"][ik]=ikk
+      if(x=="b1"):
+        info_data["B-offset"][ik]=ikk
+      if(x=="pp11"):
+        info_data["Pronoun-offset"][ik]=ikk
+      ikk=ikk+1
+    """
+
     if ex_index < 5:
       tf.logging.info("*** Example ***")
       tf.logging.info("unique_id: %s" % (example.unique_id))
@@ -452,7 +402,7 @@ def read_examples(input_file):
   flags.mark_flag_as_required("output_file")
 
 def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,output_file, info_data,
-            layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=256,use_tpu=False,use_one_hot_embeddings=False,batch_size=32,):
+            layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=500,use_tpu=False,use_one_hot_embeddings=False,batch_size=32,):
   tf.logging.set_verbosity(tf.logging.INFO)
 
   layer_indexes = [int(x) for x in layers.split(",")]
@@ -526,50 +476,53 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
     fout.write ("ID Pronoun-tok-offset  A-tok-offset  A-coref B-tok-offset  B-coref\n")
 
 
-
-
   for result in estimator.predict(input_fn, yield_single_examples=True):
     
-    #print( info_data["ID"][k] )
-    #print( info_data["B-offset"][k] )
-
-    #print(info_data["Text"][k][info_data["B-offset"][k]])
-    
-
-
     unique_id = int(result["unique_id"])
+
     feature = unique_id_to_feature[unique_id]
 
-
-    #print("\n\n\n\n\n--------")
     mod_s = " ".join(feature.tokens)
-    
     #print(mod_s)
-    new_a_off = mod_s.find("a1")
-    new_b_off = mod_s.find("b1")
 
-    info_data.at[k,"A-offset"]=new_a_off
-    info_data.at[k,"B-offset"]=new_b_off
+
+    info_data.loc[k, 'A-offset']=feature.tokens.index("a19")
+    info_data.loc[k, 'B-offset']=feature.tokens.index("b19")
+    info_data.loc[k, 'Pronoun-offset']=feature.tokens.index("pp119")
+
+
+    feature.tokens[feature.tokens.index("pp119")]="pp11"
+    feature.tokens[feature.tokens.index("a19")]="a1"
+    feature.tokens[feature.tokens.index("b19")]="b1"
+
+
+    mod_s = " ".join(feature.tokens)
+    #print(mod_s)
+    #print("\n\n")
+
+    #new_a_off = mod_s.find("axaxax")
+    #new_b_off = mod_s.find("b1")
+
+    #info_data.at[k,"A-offset"]=new_a_off
+    #info_data.at[k,"B-offset"]=new_b_off
 
 
     with open(output_file, 'a') as fout:
-        fout.write (     info_data["ID"][k] +"  "+
-                        str( info_data["Pronoun-offset"][k] )+"  "+
-                        str( info_data["A-offset"][k] )+"  "+
-                        str( info_data["A-coref"][k] )+"  "+
-                        str( info_data["B-offset"][k] )+"  "+
+        fout.write (     info_data["ID"][k] +"\t"+
+                        str( info_data["Pronoun-offset"][k] )+"\t"+
+                        str( info_data["A-offset"][k] )+"\t"+
+                        str( info_data["A-coref"][k] )+"\t"+
+                        str( info_data["B-offset"][k] )+"\t"+
                         str( info_data["B-coref"][k] )+"\n"
                                                              )
 
 
 
-    
- #   print( mod_s[info_data["B-offset"][k]])
- #   print("\n")
-
     output_json = collections.OrderedDict()
     output_json["linex_index"] = unique_id
     all_features = []
+
+
     for (i, token) in enumerate(feature.tokens):
       all_layers = []
       for (j, layer_index) in enumerate(layer_indexes):
@@ -583,14 +536,18 @@ def extract_bert_feature(input_file,vocab_file,bert_config_file,init_checkpoint,
       features = collections.OrderedDict()
       features["token"] = token
       features["layers"] = all_layers
+
+
       all_features.append(features)
 
       with open(output_file, 'a') as fout:
         fout.write (token + '\t' + ' '.join( str(x) for x in layers["values"] )+'\n' )
 
     output_json["features"] = all_features
-      #writer.write(json.dumps(output_json) + "\n")
     k=k+1
+    print(k)
+    with open(output_file, 'a') as fout:
+      fout.write ("\n") 
 
 
 

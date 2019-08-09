@@ -163,19 +163,44 @@ def compute_bert_embeddings (input_fname, output_fname):
 
 	test_data = pd.read_csv(input_fname, sep = '\t')
 	for index, row in test_data.iterrows():
+		size_p = len(row[2])
 		size_a = len(row[4])
 		size_b = len(row[7])
 
-		mod= row[1][:row[8]] + "B1" +  row[1][row[8]+size_b:] 
-		mod= mod[:row[5]] + "A1" +  mod[row[5]+size_a:] 
+		a_list= [(row[3],"pp119",size_p),(row[5],"a19",size_a),(row[8],"b19",size_b)]
+
+		#sorted(a_list, key=lambda x: x[0])
+		a_list.sort(key=lambda x:x[0],reverse=True)
+
+		#print(a_list)
+
+		#print(row)
+		#print(row[1])
+		#print(row[1])
+
+		mod= row[1][:a_list[0][0]] + " "+ a_list[0][1] +" "+  row[1][a_list[0][0] +a_list[0][2]:] 
+		mod= mod[:a_list[1][0]]    + " "+ a_list[1][1] +" "+ mod[a_list[1][0]    +a_list[1][2]:] 
+		mod= mod[:a_list[2][0]]    + " "+ a_list[2][1] +" "+ mod[a_list[2][0]    +a_list[2][2]:] 
+		
+		mod = " ".join(mod.split())
+		mod = ": " + mod
+		
+		mod = mod.replace(" "+row[4]+" "," a1 ")
+		mod = mod.replace(" "+row[7]+" "," b1 ")
+		mod = mod.replace(" "+row[2]+" "," pp11 ")
+
+		#print(mod)
+		#print("\n")
 
 		test_data.at[index,"Text"]=mod
 		
-		new_a_off = mod.find("A1")
-		new_b_off = mod.find("B1")
+		new_a_off = mod.find("a19")
+		new_b_off = mod.find("b19")
+		new_p_off = mod.find("pp119")
 
 		test_data.at[index,"A-offset"]=new_a_off
 		test_data.at[index,"B-offset"]=new_b_off
+		test_data.at[index,"Pronoun-offset"]=new_p_off
 
 
 	text = test_data["Text"]
@@ -188,8 +213,8 @@ def compute_bert_embeddings (input_fname, output_fname):
 	extract_bert_feature(input_file="input.txt",vocab_file="hltproject/utils/uncased_L-12_H-768_A-12/vocab.txt",
 		bert_config_file="hltproject/utils/uncased_L-12_H-768_A-12/bert_config.json",
 			init_checkpoint="hltproject/utils/uncased_L-12_H-768_A-12/bert_model.ckpt",output_file=output_fname,
-            	layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=256,
-            		use_tpu=False,use_one_hot_embeddings=False,batch_size=32,info_data=test_data)
+            	layers="-1",do_lower_case=True,master=None,num_tpu_cores=True,max_seq_length=500,
+            		use_tpu=False,use_one_hot_embeddings=False,batch_size=8,info_data=test_data)
 
 
 if __name__ == "__main__":

@@ -53,6 +53,7 @@ class BaselineNet (nn.Module):
 
 def get_inputs_and_label ( sent, augment=False ):
     inputs = []
+    print(sent.tokens)
     emb_A = sent.embeddings[ sent.A_tok_off ]
     emb_B = sent.embeddings[ sent.B_tok_off ]
     emb_P = sent.embeddings[ sent.pron_tok_off ]
