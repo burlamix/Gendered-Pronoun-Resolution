@@ -1,15 +1,13 @@
-from multi import *
-
 
 class model(object):
 
     
-    def train(self, train_set, vallidation_set, weight_folder_path):
+    def train(self, train_set, validation_set, weight_folder_path):
         '''
          train the model on hte validation and traning set chosen, using a k-fold cross validation
          
          \param path of the train_set to be used
-         \param path of the vallidation_set to be used
+         \param path of the validation_set to be used
          \param weight_folder_path path to folder where after the training the model weight will be saved
 
 

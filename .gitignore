@@ -8,6 +8,9 @@ embeddings
 bert-embeddings
 utils
 
+#models folders
+hltproject/ensemble/model_7_weights
+
 #compiled stuff
 *.py[cod]
 *__pycache__
