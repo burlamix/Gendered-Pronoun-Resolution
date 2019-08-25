@@ -531,6 +531,10 @@ class BertSwagRunner:
 
     def train(self,train_set,validation_set,weight_folder_path,n_splits=2):
 
+
+        train_set = pd.read_csv(train_set, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
+        validation_set = pd.read_csv(validation_set, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
         os.makedirs(weight_folder_path, exist_ok=True)
         train_set = self.extract_target(train_set)
         validation_set = self.extract_target(validation_set)
@@ -666,7 +670,10 @@ class BertSwagRunner:
         return None, None
        
 
-    def my_evaluate(self, eval_examples_df, weight_folder_path, is_test=False):
+    def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
+
+        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
 
         eval_examples = eval_examples_df.apply(lambda x: self.row_to_swag_example(x, not is_test), axis=1).tolist()
         val_preds =[]
@@ -687,3 +694,60 @@ class BertSwagRunner:
         return final_preds
 
     #val_examples = kf_val.apply(lambda x: self.row_to_swag_example(x, True), axis=1).tolist()
+
+
+
+class model_9(model):
+
+    def __init__(self):
+
+        #problema cerca di inizializzare l'oggetto senza dover istanziare i dataset, occupo memoria per nulla.
+        swag_runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
+        self.runner = swag_runner
+
+    def train(self, train_set, vallidation_set, weight_folder_path ):
+
+        self.runner.train( train_set, vallidation_set, weight_folder_path, n_splits=4)
+
+
+    #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
+    def evaluate(self, val_df, weight_folder_path="model_9" ):
+
+        return  self.runner.my_evaluate( val_df, weight_folder_path, is_test=False)
+
+
+
+'''
+test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
+dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
+val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
+'''
+
+#per trainare e testare più velocemente, sono solo 5 esempi
+test_path = "../datasets/gap-light.tsv"
+dev_path = "../datasets/gap-light.tsv"
+val_path = "../datasets/gap-light.tsv"
+
+
+
+
+print("\n\n\n\n         building model         \n\n")
+model_9_inst = model_9()
+
+
+
+print("\n\n\n\n         training model         \n\n")
+model_9_inst.train(dev_path,val_path,"model_9")
+
+
+
+print("\n\n\n\n         evaluating         \n\n")
+val_probas = model_9_inst.evaluate( test_path,"model_9")
+
+print("val_probas")
+print(val_probas)
+
+
+submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
+submission_df.to_csv('stage2_swag_only.csv', index=False)
