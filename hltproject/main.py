@@ -13,6 +13,7 @@ import hltproject.utils.config as cutils
 from hltproject.dataset_utils.compute_embeddings import compute_embeddings
 from hltproject.dataset_utils.compute_bert_embeddings import compute_bert_embeddings
 from hltproject.baseline import baseline_cosine
+from hltproject.baseline import baseline_supervised
 from hltproject.score.score import compute_loss
 
 logging.config.dictConfig(
@@ -46,6 +47,19 @@ def existing_file ( filename ):
     if not os.path.isfile (filename):
         raise argparse.ArgumentTypeError ("{} does not exist or it is not a file".format(filename))
     return filename
+
+def _supervised ( args ):
+    augment = args.augment
+    train_fname = args.train
+    validation_fname = args.validation
+    test_fname = args.test
+    output_fname = args.target + '/' + os.path.basename ( args.test ) + '.supervised_predictions'
+    logger.info ("Computing predictions using supervised model.")
+    logger.info (" input files: train {}, validation {} test {}".format(train_fname, validation_fname, test_fname) )
+    augment_message = " input will " + ("" if args.augment else "not ") + "be augmented with pairwise dot products"
+    logger.info ( augment_message )
+    logger.info (" output file: {}".format(output_fname))
+    baseline_supervised.compute_predictions ( train_fname, validation_fname, test_fname, augment, output_fname )
     
 
 def _cosine ( args ):
@@ -109,11 +123,25 @@ def main():
     parser_cosine = subparsers.add_parser(
         'baseline-cosine', formatter_class=argparse.RawTextHelpFormatter,
         help='compute prediction using on a cosine-based model')
-    parser_cosine.add_argument ('test', help='test filename')
+    parser_cosine.add_argument ('test', help='test filename', type=existing_file)
     parser_cosine.add_argument('-t', '--target', default='predictions',
                             type=output_directory,
                             help='target directory (default: predictions)')
     parser_cosine.set_defaults(func=_cosine)
+    
+    parser_supervised = subparsers.add_parser(
+        'baseline-supervised', formatter_class=argparse.RawTextHelpFormatter,
+        help='compute prediction using on a supervised model')
+    parser_supervised.add_argument ('train', help='train filename', type=existing_file)
+    parser_supervised.add_argument ('validation', help='validation filename', type=existing_file)
+    parser_supervised.add_argument ('test', help='test filename', type=existing_file)
+    parser_supervised.add_argument('-g', '--augment', default=False,
+                            action="store_true",
+                            help='whether to augment input feature adding pairwise dot product or not')
+    parser_supervised.add_argument('-t', '--target', default='predictions',
+                            type=output_directory,
+                            help='target directory (default: predictions)')
+    parser_supervised.set_defaults(func=_supervised)
     
     parser_loss = subparsers.add_parser(
         'loss', formatter_class=argparse.RawTextHelpFormatter,

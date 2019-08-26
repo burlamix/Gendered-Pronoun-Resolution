@@ -5,6 +5,11 @@ hltproject.egg-info
 
 #embeddings folder (computed)
 embeddings
+bert-embeddings
+utils
+
+#models folders
+hltproject/ensemble/model_7_weights
 
 #compiled stuff
 *.py[cod]

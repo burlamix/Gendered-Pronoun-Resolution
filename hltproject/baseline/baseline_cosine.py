@@ -7,9 +7,9 @@ from hltproject.dataset_utils.parsing import parse_embeddings_dataset
 _THRESHOLD = 0.1
 
 def compute_predictions ( input_fname, output_fname ):
-    with open(input_fname) as fin, open (output_fname, "w") as fout:
+    with open (output_fname, "w") as fout:
         fout.write ("ID,A,B,NEITHER\n")
-        for sent in tqdm.tqdm (parse_embeddings_dataset (fin)):
+        for sent in tqdm.tqdm (parse_embeddings_dataset (input_fname)):
             vecA = sent.embeddings[sent.A_tok_off]
             vecB = sent.embeddings[sent.B_tok_off]
             vec_pron = sent.embeddings[sent.pron_tok_off]
@@ -45,4 +45,4 @@ def compute_predictions ( input_fname, output_fname ):
 
 
 if __name__ == "__main__":
-    compute_predictions ( sys.argv[1], sys.argv[1], sys.argv[1] )
+    compute_predictions ( sys.argv[1], sys.argv[1] )

@@ -32,6 +32,22 @@ Requires python version 3.6+
 	  -t TARGET, --target TARGET
 							target directory (default: predictions)
 
+
+	hltproject baseline-supervised [-h] [-g] [-t TARGET]
+                                      train validation test
+
+	positional arguments:
+	  train                 train filename
+	  validation            validation filename
+	  test                  test filename
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -g, --augment         whether to augment input feature adding pairwise dot product or not
+	  -t TARGET, --target TARGET
+                        target directory (default: predictions)
+
+
 ### computing loss for a prediction
 	hltproject loss [-h] model input
 

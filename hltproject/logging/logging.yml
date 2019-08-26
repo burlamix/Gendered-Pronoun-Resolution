@@ -10,6 +10,9 @@ handlers:
     formatter: simple
 loggers:
   hltproject:
-    level: INFO
+    level: DEBUG
+    handlers: [console]
+  model_7.Step1_preprocessing: 
+    level: DEBUG
     handlers: [console]
   

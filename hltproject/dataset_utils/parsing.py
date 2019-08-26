@@ -6,7 +6,7 @@ Sentence = collections.namedtuple ('Sentence', ['id', 'tokens', 'embeddings', 'A
 Prediction = collections.namedtuple ('Prediction', ['id', 'A_prob', 'B_prob', 'N_prob'])
 
 def str_to_bool ( s ):
-    return True if s.lower() == 'true' else False
+    return s.lower() == 'true'
 
 def str_to_embedding ( s ):
     return np.array ( [float(x) for x in s.split()] )
@@ -19,27 +19,42 @@ def parse_input_dataset ( fin ):
         A_coref, B_coref = str_to_bool (A_coref), str_to_bool (B_coref)
         yield RawSentence (id, text, pron, pron_off, A, A_off, A_coref, B, B_off, B_coref, url)
 
-def parse_embeddings_dataset ( fin ):
+def parse_embeddings_dataset ( fname ):
+    fin = open (fname)
     next (fin) #skip first line
     first = True
     for line in fin:
-        #print ("line---",line[:50])
-        if line == '\n':
+        line = line.strip ()
+        # print ("line---",line[:50])
+        if line == '':
             sent = Sentence (id, toks, embs, int(Ao), str_to_bool(Ac), int(Bo), str_to_bool(Bc), int (po))
-            #print ("returining", sent)
-            #input ()
+            # print ("returining", sent)
+            # input ()
             first = True
             yield sent
         elif first:
             first = False
+            print("\n\n")
+            print(line)
+            # input()
             id, po, Ao, Ac, Bo, Bc = line.split ('\t')
+
+            #print(id)
+            #print(po)
+            #print(Ao)
+            #print(Ac)
+            #print(Bo)
+            #print(Bc)
+            
+
             toks = []
             embs = []
         else:
             str_tok, str_emb = line.split('\t')
             toks.append (str_tok)
             embs.append (str_to_embedding (str_emb))
-            
+
+#TODO: maybe softmax is better
 def parse_prediction_file ( fin ):
     next (fin) # skip first line
     for line in fin:
