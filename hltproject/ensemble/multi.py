@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function
 # This Python 3 environment comes with many helpful analytics libraries installed
 # It is defined by the kaggle/python docker image: https://github.com/kaggle/docker-python
 # For example, here's several helpful packages to load in 
+import pickle
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -59,6 +60,35 @@ logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(messa
                     datefmt = '%m/%d/%Y %H:%M:%S',
                     level = logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+
+class model(object):
+
+    
+    def train(self, train_set, validation_set, weight_folder_path):
+        '''
+         train the model on hte validation and traning set chosen, using a k-fold cross validation
+         
+         \param path of the train_set to be used
+         \param path of the validation_set to be used
+         \param weight_folder_path path to folder where after the training the model weight will be saved
+
+
+        '''
+        pass
+
+    def evaluate(self, val_df, weight_folder_path):
+        '''
+         Load the saved model from the path chosen and  return and array witht the probability of each class for the set given in input
+         
+         \param path of the val_df set to be avaluated
+         \param weight_folder_path path to folder where after the training the model weight will be saved
+
+
+        '''
+        pass
+
 
 
 #test_class_labels = [get_class_label(aco, bco) for aco, bco in zip(test_df['A-coref'], test_df['B-coref'])]
@@ -717,7 +747,7 @@ class model_9(model):
 
 
 
-'''
+
 test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
 dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
 val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -727,7 +757,7 @@ val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coref
 test_path = "../datasets/gap-light.tsv"
 dev_path = "../datasets/gap-light.tsv"
 val_path = "../datasets/gap-light.tsv"
-
+'''
 
 
 
@@ -746,6 +776,7 @@ val_probas = model_9_inst.evaluate( test_path,"model_9")
 
 print("val_probas")
 print(val_probas)
+
 
 
 submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
