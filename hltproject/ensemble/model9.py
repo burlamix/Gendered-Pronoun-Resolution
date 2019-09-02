@@ -13,8 +13,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
 
-import hltproject.utils.config as cutils
-
 
 from hltproject.score.score import compute_loss_df
 
