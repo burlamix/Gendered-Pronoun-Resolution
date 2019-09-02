@@ -2,10 +2,25 @@
 import logging
 import os
 
+
+
 from common_interface import model
 from model_9.utils import *
+from sklearn.metrics import log_loss
+
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+print(dir_path)
+
+from hltproject.score.score import compute_loss_df
+
+#from dataset_utils import compute_loss_simo
 
 logger = logging.getLogger ( __name__ )
+
+
+
 
 
 class model9(model):
@@ -55,6 +70,7 @@ if __name__ == "__main__":
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
     '''
 
+
     #per trainare e testare piu velocemente, sono solo 5 esempi
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
@@ -66,21 +82,45 @@ if __name__ == "__main__":
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
 
 
-    logger.info ("building model ")
-    model_9_inst = model9 ("model_9/weights")
+    #logger.info ("building model ")
+    #model_9_inst = model9 ("model_9/weights")
 
 
-    logger.info ("training model ")
-    model_9_inst.train(dev_path,val_path)
+    #logger.info ("training model ")
+    #model_9_inst.train(dev_path,val_path)
 
 
-    logger.info ("evaluating ")
-    val_probas = model_9_inst.evaluate( test_path )
+    #logger.info ("evaluating ")
+    #val_probas = model_9_inst.evaluate( val_path )
 
 
-    print("val_probas")
+    #print("val_probas")
+    #print(val_probas)
+    test_path = "../datasets/gap-test.tsv"
+
+
+    random = np.zeros((2000, 3))
+
+    val_probas = np.insert(random, 0, np.arange(2000), axis=1)
+
     print(val_probas)
+
+
+    val_probas_df= pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
+
+    print(compute_loss_df(val_probas_df,test_path))
+
+    #for i in range(len(y_test)):
+    #    y_one_hot[i, y_test[i]] = 1
+    #log_loss(y_one_hot, pred)
 
 
     #submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     #submission_df.to_csv('stage2_swag_only.csv', index=False)
+
+
+
+'''
+
+'''
