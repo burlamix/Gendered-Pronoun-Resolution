@@ -1,17 +1,20 @@
 
 import logging
 import os
-
-
+import pandas as pd
+import numpy as np
 
 from common_interface import model
-from model_9.utils import *
+from model_9.utils import BertSwagRunner
 from sklearn.metrics import log_loss
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print(dir_path)
+
+import hltproject.utils.config as cutils
+
 
 from hltproject.score.score import compute_loss_df
 
@@ -82,26 +85,23 @@ if __name__ == "__main__":
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
 
 
-    #logger.info ("building model ")
-    #model_9_inst = model9 ("model_9/weights")
+    logger.info ("building model ")
+    model_9_inst = model9 ("model_9/weights")
 
 
     #logger.info ("training model ")
     #model_9_inst.train(dev_path,val_path)
 
 
-    #logger.info ("evaluating ")
-    #val_probas = model_9_inst.evaluate( val_path )
+    logger.info ("evaluating ")
+    val_probas_no_i = model_9_inst.evaluate( test_path )
 
 
-    #print("val_probas")
-    #print(val_probas)
     test_path = "../datasets/gap-test.tsv"
 
 
-    random = np.zeros((2000, 3))
 
-    val_probas = np.insert(random, 0, np.arange(2000), axis=1)
+    val_probas = np.insert(val_probas_no_i, 0, np.arange(2000), axis=1)
 
     print(val_probas)
 
