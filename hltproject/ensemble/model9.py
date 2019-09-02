@@ -45,6 +45,7 @@ class model9(model):
             setattr(self, parameter, value)
         return self
 
+
 #UNIT TESTS
 if __name__ == "__main__":
 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"
+
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
@@ -68,7 +70,7 @@ if __name__ == "__main__":
 
 
     logger.info ("training model ")
-    #model_9_inst.train(dev_path,val_path)
+    model_9_inst.train(dev_path,val_path)
 
 
     logger.info ("evaluating ")
@@ -79,5 +81,5 @@ if __name__ == "__main__":
     print(val_probas)
 
 
-    submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    submission_df.to_csv('stage2_swag_only.csv', index=False)
+    #submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #submission_df.to_csv('stage2_swag_only.csv', index=False)

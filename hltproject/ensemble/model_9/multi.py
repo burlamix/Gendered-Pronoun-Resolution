@@ -139,7 +139,7 @@ class SwagInputFeatures(object):
 # TODO: "token_pronoun_embeddings" aren't being used here. That is left for future work!
 class BertSwagRunner:
     def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case = True, learning_rate = 1e-5,  
-                  num_train_epochs = 2, max_seq_length = 300, train_batch_size = 4, predict_batch_size = 4, warmup_proportion = 0.1,
+                  num_train_epochs = 2, max_seq_length = 300, train_batch_size = 4, predict_batch_size = 8, warmup_proportion = 0.1,
                                   num_choices=3):
         #self.dev_df = self.extract_target(dev_df)
         #self.val_df = self.extract_target(val_df)
@@ -529,7 +529,7 @@ class BertSwagRunner:
             
         return val_preds, test_preds, val_losses
 
-    def train(self,train_set,validation_set,weight_folder_path,n_splits=2):
+    def train(self,train_set,validation_set,weight_folder_path,n_splits=3):
 
 
         train_set = pd.read_csv(train_set, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
