@@ -4,12 +4,16 @@ from hltproject.dataset_utils.parsing import parse_input_dataset, parse_predicti
 import logging
 import logging.config
 import hltproject.utils.config as cutils
+import collections
 
 import math
 
 logging.config.dictConfig(
     cutils.load_logger_config_file())
 logger = logging.getLogger ( __name__ )
+
+Prediction = collections.namedtuple ('Prediction', ['id', 'A_prob', 'B_prob', 'N_prob'])
+
 
 def parse_pandas ( fin ):
 
