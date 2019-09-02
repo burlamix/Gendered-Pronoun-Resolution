@@ -716,12 +716,8 @@ class model_9(model):
         return  self.runner.my_evaluate( val_df, weight_folder_path, is_test=False)
 
 
+'''
 
-'''
-test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
-dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
-val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
-'''
 
 #per trainare e testare più velocemente, sono solo 5 esempi
 test_path = "../datasets/gap-light.tsv"
@@ -751,3 +747,6 @@ print(val_probas)
 submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
 submission_df.to_csv('stage2_swag_only.csv', index=False)
+
+
+'''

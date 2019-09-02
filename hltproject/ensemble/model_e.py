@@ -43,7 +43,7 @@ if __name__ == "__main__":
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
     '''
-    #per trainare e testare più velocemente, sono solo 5 esempi
+    #per trainare e testare piu velocemente, sono solo 5 esempi
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"

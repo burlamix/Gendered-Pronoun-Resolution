@@ -31,6 +31,20 @@ class model9(model):
 
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
+    def fit(self, val_df , a ):
+
+        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
+
+
+    def get_params(self, deep=True):
+        # suppose this estimator has parameters "alpha" and "recursive"
+        return {"weight_path": self.weight_path}
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
+
 #UNIT TESTS
 if __name__ == "__main__":
 
