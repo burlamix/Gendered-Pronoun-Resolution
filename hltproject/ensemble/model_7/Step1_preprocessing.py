@@ -3,6 +3,8 @@ import logging
 import logging.config
 import hltproject.utils.config as cutils
 
+from shutil import copyfile
+
 logging.config.dictConfig(
     cutils.load_logger_config_file())
 logger = logging.getLogger ( __name__ )
@@ -33,13 +35,18 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
 
     import spacy
 
+    logger.info ("model_7.original_notebook_preprocessing input_tsv_filename {} is_inference {}".format(input_tsv_fname, is_inference))
+    
     #PATH CONSTANTS FOR CONSISTENCY WITH OTHER NOTEBOOKS 
-    AUGMENTED_FILES_PREFIX = path + "/input/" + os.path.basename (input_tsv_fname).split('.')[0] + '_'
+    AUGMENTED_FILES_PREFIX = path + "/input/" + os.path.basename (input_tsv_fname).split('.')[0]
     EMBEDDINGS_FILES_PREFIX = path + "/embeddings/" + os.path.basename(input_tsv_fname).split('.')[0] + '_'
     LINGUI_CSV_FNAME = path + "/output/" + os.path.basename (input_tsv_fname).split('.')[0] + "_lingui_df.csv"
     DIST_CSV_FNAME = path + '/output/'+os.path.basename (input_tsv_fname).split('.')[0]+'_dist_df.csv'
     EXTRACT_FEATURES_PATH = "model_7/extract_features.py"
     
+    logger.info ("copying input file into input/ folder")
+    copyfile ( input_tsv_fname, path + "/input/" + os.path.basename (input_tsv_fname) )
+
     logger.info ("loading spacy extensions")
     try:
         nlp = spacy.load('en_core_web_lg')
@@ -107,7 +114,7 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
                         { 'female':['Kate','Elizabeth'], 'male': ['Michael','James']},
                         { 'female':['Mary','Alice'], 'male': ['Henry','John']}]:
             logger.info ("name set: {}".format(names))
-            output_fname = output_prefix + '_'.join([names['female'][0],names['female'][1],names['male'][0],names['male'][1]]) +'.tsv'
+            output_fname = output_prefix + '_' + '_'.join([names['female'][0],names['female'][1],names['male'][0],names['male'][1]]) +'.tsv'
             if os.path.exists (output_fname):
                 continue
     
@@ -418,10 +425,10 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
 
             for TTA_suffix in tqdm(TTA_suffixes):
 
-                aug_fname = AUGMENTED_FILES_PREFIX+TTA_suffix+'.tsv'
-                if not TTA_suffix:
-                    aug_fname = input_tsv_fname
-
+                if TTA_suffix:
+                    aug_fname = AUGMENTED_FILES_PREFIX+'_'+TTA_suffix+'.tsv'
+                else:
+                    aug_fname = AUGMENTED_FILES_PREFIX+'.tsv'
 
                 if is_inference:
                 

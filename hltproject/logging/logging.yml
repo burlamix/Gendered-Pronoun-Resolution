@@ -12,7 +12,7 @@ loggers:
   hltproject:
     level: DEBUG
     handlers: [console]
-  model_7.Step1_preprocessing: 
+  model_7: 
     level: DEBUG
     handlers: [console]
   
