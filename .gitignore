@@ -10,6 +10,7 @@ utils
 
 #models folders
 hltproject/ensemble/model_7_weights
+hltproject/ensemble/model_9/weights
 
 #compiled stuff
 *.py[cod]

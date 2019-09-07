@@ -30,7 +30,7 @@ setup(
             'hltproject = hltproject.main:main'
         ],
     },
-    install_requires=['tqdm==4.31.1', 'allennlp==0.8.1', 'torch==1.0.1.post2', 'torchvision==0.2.2.post3', 'gender-guesser'],
+    install_requires=['tqdm==4.31.1', 'allennlp==0.8.1', 'torch==1.2.0', 'torchvision==0.4.0', 'gender-guesser'],
     classifiers=['Development Status :: 2 - Pre-Alpha',
                  'Intended Audience :: Developers',
                  'Intended Audience :: Education',

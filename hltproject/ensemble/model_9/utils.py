@@ -654,7 +654,7 @@ class BertSwagRunner:
             #val_class_labels = kf_val['target'].tolist()#[self.get_class_label(aco, bco) for aco, bco in zip(kf_val['A-coref'], kf_val['B-coref'])]
             #val_class_labels = [get_class_label(aco, bco) for aco, bco in zip(kf_val['A-coref'], kf_val['B-coref'])]
 
-            #val_preds.append(val_probas)
+            val_preds.append("1")
 
 
             #val_losses.append(log_loss(val_class_labels, val_probas,labels=[0,1,2]))
@@ -688,66 +688,10 @@ class BertSwagRunner:
                 val_loss, val_probas = self.evaluate(model, eval_examples, is_test)
 
                 val_preds.append(val_probas)
-
+            break
+            
         final_preds = np.mean(val_preds, axis=0)
 
         return final_preds
 
     #val_examples = kf_val.apply(lambda x: self.row_to_swag_example(x, True), axis=1).tolist()
-
-
-
-class model_9(model):
-
-    def __init__(self):
-
-        #problema cerca di inizializzare l'oggetto senza dover istanziare i dataset, occupo memoria per nulla.
-        swag_runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
-        self.runner = swag_runner
-
-    def train(self, train_set, vallidation_set, weight_folder_path ):
-
-        self.runner.train( train_set, vallidation_set, weight_folder_path, n_splits=4)
-
-
-    #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
-    def evaluate(self, val_df, weight_folder_path="model_9" ):
-
-        return  self.runner.my_evaluate( val_df, weight_folder_path, is_test=False)
-
-
-
-'''
-test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
-dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
-val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
-'''
-
-#per trainare e testare più velocemente, sono solo 5 esempi
-test_path = "../datasets/gap-light.tsv"
-dev_path = "../datasets/gap-light.tsv"
-val_path = "../datasets/gap-light.tsv"
-
-
-
-
-print("\n\n\n\n         building model         \n\n")
-model_9_inst = model_9()
-
-
-
-print("\n\n\n\n         training model         \n\n")
-model_9_inst.train(dev_path,val_path,"model_9")
-
-
-
-print("\n\n\n\n         evaluating         \n\n")
-val_probas = model_9_inst.evaluate( test_path,"model_9")
-
-print("val_probas")
-print(val_probas)
-
-
-submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-
-submission_df.to_csv('stage2_swag_only.csv', index=False)
