@@ -58,13 +58,13 @@ class Model7(model):
 #RUN the model
 if __name__ == "__main__":
     #TESTS with light dataset
-    # test_path = "../datasets/gap-light.tsv"
-    # dev_path = "../datasets/gap-light.tsv"
-    # val_path = "../datasets/gap-light.tsv"
+    test_path = "../datasets/gap-light.tsv"
+    dev_path = "../datasets/gap-light.tsv"
+    val_path = "../datasets/gap-light.tsv"
 
-    test_path = "../datasets/gap-test.tsv"
-    dev_path = "../datasets/gap-development.tsv"
-    val_path = "../datasets/gap-validation.tsv"
+    # test_path = "../datasets/gap-test.tsv"
+    # dev_path = "../datasets/gap-development.tsv"
+    # val_path = "../datasets/gap-validation.tsv"
     
     model7_instance = Model7 ()
     model7_instance.train ( dev_path, val_path, "model_7_weights")
