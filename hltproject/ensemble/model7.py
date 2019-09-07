@@ -55,12 +55,17 @@ class Model7(model):
             for CASED in [ True, False ]:
                 original_notebook_e2e ( all_train, CASED, weight_folder_path, self.train_set, self.dev_set, val_set )
 
-#UNIT TESTS
+#RUN the model
 if __name__ == "__main__":
-    test_path = "../datasets/gap-light.tsv"
-    dev_path = "../datasets/gap-light.tsv"
-    val_path = "../datasets/gap-light.tsv"
+    #TESTS with light dataset
+    # test_path = "../datasets/gap-light.tsv"
+    # dev_path = "../datasets/gap-light.tsv"
+    # val_path = "../datasets/gap-light.tsv"
 
+    test_path = "../datasets/gap-test.tsv"
+    dev_path = "../datasets/gap-development.tsv"
+    val_path = "../datasets/gap-validation.tsv"
+    
     model7_instance = Model7 ()
     model7_instance.train ( dev_path, val_path, "model_7_weights")
-    model7_instance.evaluate (val_path, "model_7_weights" )
+    #model7_instance.evaluate (val_path, "model_7_weights" )
