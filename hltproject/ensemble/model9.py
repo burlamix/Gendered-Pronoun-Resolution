@@ -99,15 +99,17 @@ if __name__ == "__main__":
 
 
 
-    val_probas = np.insert(val_probas_no_i, 0, np.arange(2000), axis=1)
+    #val_probas = np.insert(val_probas_no_i, 0, np.arange(2000), axis=1)
 
-    print(val_probas)
-
-
-    val_probas_df= pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #print(val_probas)
 
 
-    print(compute_loss_df(val_probas_df,test_path))
+    val_probas_df= pd.DataFrame([test_df_prod.ID, val_probas_no_i[:,0], val_probas_no_i[:,1], val_probas_no_i[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
+    val_probas_df.to_csv('stage1_swag_only_my_w.csv', index=False)
+
+
+    #print(compute_loss_df(val_probas_df,test_path))
 
     #for i in range(len(y_test)):
     #    y_one_hot[i, y_test[i]] = 1
