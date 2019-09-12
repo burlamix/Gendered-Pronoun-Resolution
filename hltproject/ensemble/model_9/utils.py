@@ -697,6 +697,29 @@ class BertSwagRunner:
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------#
 
 class SquadExample(object):
     """
@@ -773,9 +796,9 @@ SquadRawResult = collections.namedtuple("SquadRawResult",
 # A good chunk of this is borrowed from https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/examples/run_squad.py
 class SquadRunner:
     def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case = True, learning_rate = 1e-5,                num_train_epochs = 2, max_seq_length = 300, doc_stride = 128, train_batch_size = 12, predict_batch_size = 8, warmup_proportion = 0.1,                n_best_size = 20, max_query_length = 50, max_answer_length = 50, output_dir = 'squad'):
-        self.dev_df = self.extract_target(dev_df)
-        self.val_df = self.extract_target(val_df)
-        self.test_df = test_df
+        #self.dev_df = self.extract_target(dev_df)
+        #self.val_df = self.extract_target(val_df)
+        #self.test_df = test_df
         #self.test_df = self.extract_target(test_df)
 
         # Custom parameters
@@ -1548,6 +1571,7 @@ class SquadRunner:
 
         return list(logits.values())
     
+    '''
     def run_k_fold(self):
         kfold_data = pd.concat([self.dev_df, self.val_df])
         kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
@@ -1732,3 +1756,272 @@ class SquadRunner:
             break
             
         return val_preds, test_preds, val_losses
+
+'''
+
+    def train(self,train_set,validation_set,weight_folder_path,n_splits=2):
+
+        train_set = pd.read_csv(train_set, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
+        validation_set = pd.read_csv(validation_set, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
+        os.makedirs(weight_folder_path, exist_ok=True)
+        train_set = self.extract_target(train_set)
+        validation_set = self.extract_target(validation_set)
+
+        kfold_data = pd.concat([train_set,validation_set])
+
+
+        kf = StratifiedKFold(n_splits, shuffle=True, random_state=42)
+
+        #test_squad_format = self.test_df.apply(lambda x: self.row_to_squad_example(x, False), axis=1).tolist()             #  test feature
+        #test_examples = self.read_squad_examples_from_data(test_squad_format, False, False)
+        #test_features = self.convert_examples_to_features(
+        #            examples=test_examples,
+        #            tokenizer=self.tokenizer,
+         #           max_seq_length=self.max_seq_length,
+         #           doc_stride=self.doc_stride,
+         #           max_query_length=self.max_query_length,
+          #          is_training=False)
+
+        zi=0
+
+        val_preds, test_preds, val_losses = [], [], []
+
+        for train_index, valid_index in kf.split(kfold_data, kfold_data["gender"]):
+            print("=" * 20)
+            print(f"Fold {len(val_preds) + 1}")
+            print("=" * 20)
+            kf_train_unfiltered = kfold_data.iloc[train_index]
+            kf_val_unfiltered = kfold_data.iloc[valid_index]
+            kf_train = kf_train_unfiltered[kf_train_unfiltered['A-coref'] | kf_train_unfiltered['B-coref']]
+            kf_val = kf_val_unfiltered[kf_val_unfiltered['A-coref'] | kf_val_unfiltered['B-coref']]
+
+            train_squad = kf_train.apply(lambda x: self.row_to_squad_example(x, True), axis=1).tolist()
+            val_squad = kf_val.apply(lambda x: self.row_to_squad_example(x, True), axis=1).tolist()
+            train_examples = self.read_squad_examples_from_data(train_squad, True, False)
+            val_examples = self.read_squad_examples_from_data(val_squad, False, False)
+
+            num_train_optimization_steps = int(
+                len(train_examples) / self.train_batch_size / self.gradient_accumulation_steps) * self.num_train_epochs
+
+            # Prepare model
+            model = BertForQuestionAnswering.from_pretrained(self.bert_model,
+                        cache_dir=os.path.join(PYTORCH_PRETRAINED_BERT_CACHE, 'distributed_{}'.format(self.local_rank)))
+
+            # Freeze some weights
+            model_children = list(model.children())
+            bert_layers = list(model_children[0].children())
+            bert_embeddings, bert_encoder, bert_pooler = bert_layers
+
+            for param in bert_embeddings.parameters():
+                param.requires_grad = False
+
+            for child in list(bert_encoder.children())[0][:-12]:
+                for param in child.parameters():
+                    param.requires_grad = False
+
+            total_params = sum(p.numel() for p in model.parameters())
+
+            total_trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+            print(f"Total parameters: {total_params}, trainable parameters: {total_trainable_params}")
+
+            model.to(self.device)
+            model = torch.nn.DataParallel(model)
+
+            # Prepare optimizer
+            param_optimizer = list(model.named_parameters())
+
+            # hack to remove pooler, which is not used
+            # thus it produce None grad that break apex
+            param_optimizer = [n for n in param_optimizer if 'pooler' not in n[0]]
+
+            no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+            optimizer_grouped_parameters = [
+                {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+                {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+                ]
+
+            optimizer = BertAdam(optimizer_grouped_parameters,
+                                 lr=self.learning_rate,
+                                 warmup=self.warmup_proportion,
+                                 t_total=num_train_optimization_steps)
+
+            global_step = 0
+
+            train_features = self.convert_examples_to_features(
+                examples=train_examples,
+                tokenizer=self.tokenizer,
+                max_seq_length=self.max_seq_length,
+                doc_stride=self.doc_stride,
+                max_query_length=self.max_query_length,
+                is_training=True)
+
+            logger.info("***** Running training *****")
+            logger.info("  Num orig examples = %d", len(train_examples))
+            logger.info("  Num split examples = %d", len(train_features))
+            logger.info("  Batch size = %d", self.train_batch_size)
+            logger.info("  Num steps = %d", num_train_optimization_steps)
+            all_input_ids = torch.tensor([f.input_ids for f in train_features], dtype=torch.long)
+            all_input_mask = torch.tensor([f.input_mask for f in train_features], dtype=torch.long)
+            all_segment_ids = torch.tensor([f.segment_ids for f in train_features], dtype=torch.long)
+            all_start_positions = torch.tensor([f.start_position for f in train_features], dtype=torch.long)
+            all_end_positions = torch.tensor([f.end_position for f in train_features], dtype=torch.long)
+            train_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids,
+                                       all_start_positions, all_end_positions)
+            train_sampler = RandomSampler(train_data)
+            train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=self.train_batch_size)
+
+            model.train()
+            for _ in trange(int(self.num_train_epochs), desc="Epoch"):
+                for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
+                    batch = tuple(t.to(self.device) for t in batch) # multi-gpu does scattering it-self
+                    input_ids, input_mask, segment_ids, start_positions, end_positions = batch
+                    loss = model(input_ids, segment_ids, input_mask, start_positions, end_positions)
+
+                    if self.gradient_accumulation_steps > 1:
+                        loss = loss / gradient_accumulation_steps
+                    print(f"loss: {loss}")
+                    loss.backward()
+                    if (step + 1) % self.gradient_accumulation_steps == 0:
+                        optimizer.step()
+                        optimizer.zero_grad()
+                        global_step += 1
+                        
+            model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
+            # If we save using the predefined names, we can load using `from_pretrained`
+            output_model_file = os.path.join('.', WEIGHTS_NAME)
+            output_config_file = os.path.join('.', CONFIG_NAME)
+
+            torch.save(model_to_save.state_dict(), output_model_file)
+            model_to_save.config.to_json_file(output_config_file)
+            self.tokenizer.save_vocabulary('.')
+
+            train_squad_unfiltered = kf_train_unfiltered.apply(lambda x: self.row_to_squad_example(x, True), axis=1).tolist()
+            val_squad_unfiltered = kf_val_unfiltered.apply(lambda x: self.row_to_squad_example(x, True), axis=1).tolist()
+            train_examples_unfiltered = self.read_squad_examples_from_data(train_squad_unfiltered, True, False)
+            val_examples_unfiltered = self.read_squad_examples_from_data(val_squad_unfiltered, False, False)
+
+            train_features_unfiltered = self.convert_examples_to_features(
+                examples=train_examples_unfiltered,
+                tokenizer=self.tokenizer,
+                max_seq_length=self.max_seq_length,
+                doc_stride=self.doc_stride,
+                max_query_length=self.max_query_length,
+                is_training=False)
+            val_features_unfiltered = self.convert_examples_to_features(
+                examples=val_examples_unfiltered,
+                tokenizer=self.tokenizer,
+                max_seq_length=self.max_seq_length,
+                doc_stride=self.doc_stride,
+                max_query_length=self.max_query_length,
+                is_training=False)
+            
+            # Train logits
+            train_predictions, train_results = self.evaluate(model, train_examples_unfiltered, train_features_unfiltered)
+
+            # Val logits
+            #val_predictions, val_results = self.evaluate(model, val_examples_unfiltered, val_features_unfiltered)
+
+            # Test logits
+            #test_predictions, test_results = self.evaluate(model, test_examples, test_features)
+
+            train_a_b_logits = self.build_a_b_logits(train_examples_unfiltered, train_features_unfiltered, train_results, train_predictions, kf_train_unfiltered['A'].tolist(),
+                    kf_train_unfiltered['B'].tolist(), kf_train_unfiltered['A-offset'].tolist(), kf_train_unfiltered['B-offset'].tolist())
+            #val_a_b_logits = self.build_a_b_logits(val_examples_unfiltered, val_features_unfiltered, val_results, val_predictions, kf_val_unfiltered['A'].tolist(),
+            #                kf_val_unfiltered['B'].tolist(), kf_val_unfiltered['A-offset'].tolist(), kf_val_unfiltered['B-offset'].tolist())
+            #test_a_b_logits = self.build_a_b_logits(test_examples, test_features, test_results, test_predictions, self.test_df['A'].tolist(),
+            #                self.test_df['B'].tolist(), self.test_df['A-offset'].tolist(), self.test_df['B-offset'].tolist())
+
+            scaler = StandardScaler().fit(train_a_b_logits)
+
+            train_a_b_logits_scaled = scaler.transform(train_a_b_logits)
+            #val_a_b_logits_scaled = scaler.transform(val_a_b_logits)
+            ###########################test_a_b_logits_scaled = scaler.transform(test_a_b_logits)
+
+            train_class_labels = [self.get_class_label(aco, bco) for aco, bco in zip(kf_train_unfiltered['A-coref'], kf_train_unfiltered['B-coref'])]
+            #val_class_labels = [self.get_class_label(aco, bco) for aco, bco in zip(kf_val_unfiltered['A-coref'], kf_val_unfiltered['B-coref'])]
+
+            logreg = LogisticRegression(C=0.1)
+            logreg.fit(np.array(train_a_b_logits_scaled), train_class_labels)
+
+            #val_logreg_probas = logreg.predict_proba(val_a_b_logits_scaled)
+            ########################test_logreg_probas = logreg.predict_proba(test_a_b_logits_scaled)
+
+            #val_preds.append(val_logreg_probas)
+            #val_losses.append(log_loss(val_class_labels, val_logreg_probas))
+            #logger.info("Confirm val loss: %.4f", val_losses[-1])
+            #test_preds.append(test_logreg_probas)
+
+            #del model
+            
+            with open(weight_folder_path+"/weights_QA_fold_"+str(zi)+".mw", 'wb') as output:
+                pickle.dump([model,scaler,logreg], output, pickle.HIGHEST_PROTOCOL)
+            zi=zi+1
+            del model
+            del scaler
+            del logreg
+            #break         return val_preds, test_preds, val_losses
+
+
+
+        return None, None, None
+
+
+
+
+    def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
+
+        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
+        eval_examples_format = eval_examples_df.apply(lambda x: self.row_to_squad_example(x, False), axis=1).tolist()             #  test feature
+        eval_examples = self.read_squad_examples_from_data(eval_examples_format, False, False)
+        eval_features = self.convert_examples_to_features(
+                    examples=eval_examples,
+                    tokenizer=self.tokenizer,
+                    max_seq_length=self.max_seq_length,
+                    doc_stride=self.doc_stride,
+                    max_query_length=self.max_query_length,
+                    is_training=False)
+
+        #eval_examples = eval_examples_df.apply(lambda x: self.row_to_swag_example(x, not is_test), axis=1).tolist()
+        val_preds =[]
+        zi=0
+        for filename in os.listdir(weight_folder_path):
+            if filename.endswith(".mw") : 
+                 # print(os.path.join(directory, filename))
+                with open(weight_folder_path+"/weights_QA_fold_"+str(zi)+".mw", "rb") as handle:
+                    [model,scaler,logreg] = pickle.load(handle)
+                zi=zi+1
+
+                val_loss, val_probas = self.evaluate(model, eval_examples, eval_features)
+
+                #print(val_probas)
+
+                test_a_b_logits = self.build_a_b_logits(eval_examples, eval_features, val_probas, val_loss, eval_examples_df['A'].tolist(),
+                        eval_examples_df['B'].tolist(), eval_examples_df['A-offset'].tolist(), eval_examples_df['B-offset'].tolist())
+
+                test_a_b_logits_scaled = scaler.transform(test_a_b_logits)
+
+                test_logreg_probas = logreg.predict_proba(test_a_b_logits_scaled)
+
+                val_preds.append(test_logreg_probas)
+            break
+            
+        final_preds = np.mean(val_preds, axis=0)
+
+        return final_preds
+
+
+
+
+
+                #test_squad_format = self.test_df.apply(lambda x: self.row_to_squad_example(x, False), axis=1).tolist()             #  test feature
+        #test_examples = self.read_squad_examples_from_data(test_squad_format, False, False)
+        #test_features = self.convert_examples_to_features(
+        #            examples=test_examples,
+        #            tokenizer=self.tokenizer,
+         #           max_seq_length=self.max_seq_length,
+         #           doc_stride=self.doc_stride,
+         #           max_query_length=self.max_query_length,
+          #          is_training=False)

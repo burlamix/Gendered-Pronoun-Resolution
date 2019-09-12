@@ -18,6 +18,6 @@ print(dir_path)
 from hltproject.score.score import compute_loss
 
 
-compute_loss("stage1_swag_only.csv","gap-development.tsv")
+compute_loss("stage1_swag_only_my_w.csv","gap-test.tsv")
 
 
