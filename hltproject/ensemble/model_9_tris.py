@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 from common_interface import model
-from model_9.utils import BertSwagRunner
+from model_9.utils import BERTSpanExtractor
 from sklearn.metrics import log_loss
 
 import os 
@@ -33,7 +33,7 @@ class model9(model):
     '''
     def __init__(self,weight_path):
 
-        swag_runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
+        swag_runner = BERTSpanExtractor(None, None, None,  bert_model='bert-large-uncased')
         self.runner = swag_runner
         self.weight_path = weight_path
 
@@ -43,10 +43,11 @@ class model9(model):
 
 
     #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
-    def evaluate(self, val_df ):
-
-        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
-
+#    def evaluate(self, val_df ):
+    
+#        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
+    
+    '''
     def fit(self, val_df , a ):
 
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
@@ -60,12 +61,12 @@ class model9(model):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
-
+    '''
 
 #UNIT TESTS
 if __name__ == "__main__":
 
-    '''
+ 
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -76,26 +77,27 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"
-    
-    
+    ''' 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
 
 
-    logger.info ("building model ")
+    logger.info ("\n\nbuilding model ")
     model_9_inst = model9 ("model_9/weights")
 
 
-    #logger.info ("training model ")
-    #model_9_inst.train(dev_path,val_path)
+    logger.info ("\n\ntraining model ")
+    model_9_inst.train(dev_path,val_path)
+    logger.info ("\n\n\n\ntraining finished ")
 
 
     logger.info ("evaluating ")
     val_probas_no_i = model_9_inst.evaluate( test_path )
+    logger.info ("evaluating finished")
 
     print(val_probas_no_i)
-    test_path = "../datasets/gap-test.tsv"
+    #test_path = "../datasets/gap-test.tsv"
 
 
 
@@ -106,7 +108,7 @@ if __name__ == "__main__":
 
     val_probas_df= pd.DataFrame([test_df_prod.ID, val_probas_no_i[:,0], val_probas_no_i[:,1], val_probas_no_i[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
-    val_probas_df.to_csv('stage1_swag_only_my_w.csv', index=False)
+    val_probas_df.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
 
 
     #print(compute_loss_df(val_probas_df,test_path))
