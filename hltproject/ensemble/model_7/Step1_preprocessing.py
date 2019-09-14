@@ -299,6 +299,7 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
             --batch_size=" + str(BS)
         if CASED:
             command += ' --do_lower_case=False'
+
         print(command)
         os.system(command)
 
@@ -394,7 +395,9 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
 
 
     def extract_data(input_tsv_path, output_json_path, start_idx=None, end_idx=None, is_inference=False):
+        logger.info ("extracting data from input file {}, output {}".format(input_tsv_path, output_json_path))
         if os.path.exists(output_json_path):
+            logger.info ("already computed, skipping")
             return
         data = pd.read_csv(input_tsv_path, sep = '\t')
         if start_idx!=None and end_idx!=None:
@@ -858,5 +861,6 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
         lingui_df  = post_process(lingui_df)
         
         lingui_df.to_csv(LINGUI_CSV_FNAME, index=False)
-        
+
+    logger.info ("Done preprocessing {}".format (input_tsv_fname))
 

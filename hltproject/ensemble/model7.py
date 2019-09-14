@@ -38,8 +38,8 @@ class Model7(model):
         logger.info ("preprocessing train set")
         original_notebook_preprocessing (False, weight_folder_path, train_set)
         
-        # logger.info ("preprocessing validation set")
-        # original_notebook_preprocessing (False, weight_folder_path, dev_set)
+        logger.info ("preprocessing dev set")
+        original_notebook_preprocessing (False, weight_folder_path, dev_set)
         
 
     def evaluate(self, val_set, weight_folder_path="model_7_weights" ):
@@ -67,5 +67,5 @@ if __name__ == "__main__":
     val_path = "../datasets/gap-validation.tsv"
     
     model7_instance = Model7 ()
-    model7_instance.train ( dev_path, val_path, "model_7_weights")
+    model7_instance.train ( test_path, dev_path, "model_7_weights")
     #model7_instance.evaluate (val_path, "model_7_weights" )
