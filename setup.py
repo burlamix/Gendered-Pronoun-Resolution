@@ -21,16 +21,16 @@ setup(
     license='GPL 3.0',
     keywords=[],
     platforms=['any'],
-    packages=['hltproject', 'hltproject.dataset_utils', 'hltproject.baseline', 'hltproject.logging',
+    packages=['hltproject', 'hltproject.dataset_utils', 'hltproject.baseline', 'hltproject.logging_config',
               'hltproject.score'],
-    package_data={'hltproject': ['logging/*.yml']},
+    package_data={'hltproject': ['logging_config/*.yml']},
     include_package_data=True,
     entry_points={
         'console_scripts': [
             'hltproject = hltproject.main:main'
         ],
     },
-    install_requires=['tqdm==4.31.1', 'allennlp==0.8.1', 'torch==1.2.0', 'torchvision==0.4.0', 'gender-guesser'],
+    install_requires=['tqdm==4.31.1', 'torchvision==0.4.0', 'gender-guesser'],
     classifiers=['Development Status :: 2 - Pre-Alpha',
                  'Intended Audience :: Developers',
                  'Intended Audience :: Education',
