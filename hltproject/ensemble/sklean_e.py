@@ -10,14 +10,18 @@ from sklearn.svm import LinearSVC
 from brew.base import Ensemble, EnsembleClassifier
 from brew.combination.combiner import Combiner
 
+import pandas as pd
 
 
 
-
-val_path = "../datasets/gap-light.tsv"
+val_pathx = "../datasets/gap-light.tsv"
 
 mode_9 = model9("model_9/weights")
 
+
+val_path = pd.read_csv(val_pathx, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
+print(val_path.shape)
 
 
 # create your Ensemble clf1 can be an EnsembleClassifier object too
@@ -32,6 +36,8 @@ ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
  
 # assuming you have a X, y data you can use
 ensemble_clf.fit(val_path, val_path)
+
+print("-----------d-----------")
 ensemble_clf.predict(val_path)
 ensemble_clf.predict_proba(val_path)
  

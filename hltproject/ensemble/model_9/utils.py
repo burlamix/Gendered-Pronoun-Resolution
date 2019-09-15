@@ -681,7 +681,8 @@ class BertSwagRunner:
     def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
 
         print("------------------")
-        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        eval_examples_df = eval_examples_name
+        #eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
 
         eval_examples = eval_examples_df.apply(lambda x: self.row_to_swag_example(x, not is_test), axis=1).tolist()
