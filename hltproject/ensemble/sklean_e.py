@@ -17,9 +17,10 @@ import pandas as pd
 val_pathx = "../datasets/gap-light.tsv"
 
 mode_9 = model9("model_9/weights")
-
-
 val_path = pd.read_csv(val_pathx, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
+'''
+
 
 print(val_path.shape)
 
@@ -39,26 +40,16 @@ ensemble_clf.fit(val_path, val_path)
 
 print("-----------d-----------")
 ensemble_clf.predict(val_path)
-ensemble_clf.predict_proba(val_path)
  
-# creating a new ensemble of ensembles
-ens = Ensemble(classifiers=[clf1,ensemble_clf])
-ensemble_ens = EnsembleClassifier(ensemble=ens, combiner=cmb)
- 
-# and you can use it in the same way as a regular ensemble
-ensemble_ens.fit(val_path, val_path)
-ensemble_ens.predict(val_path)
-ensemble_ens.predict_proba(val_path)
 
-
-exit()
+'''
 
 
 mode_9 = model9("model_9/weights")
 
 #check_estimator(mode_9)  # passes
 
-val_path = "../datasets/gap-light.tsv"
+#val_path = "../datasets/gap-light.tsv"
 
 
 
@@ -74,7 +65,14 @@ clf3 = GaussianNB()
 
 eclf1 = VotingClassifier(estimators=[        ('lr', mode_9), ('rf', mode_9), ('gnb', mode_9)], voting='hard')
 
-#eclf1 = eclf1.fit(val_path, val_path)
+print(val_path.shape)
+
+
+val_path_2 = val_path["A"]
+
+print(val_path_2.shape)
+
+eclf1 = eclf1.fit(val_path, val_path_2)
 
 #print(eclf1.predict(X))
 '''

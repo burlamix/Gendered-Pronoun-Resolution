@@ -15,6 +15,7 @@ print(dir_path)
 
 
 from hltproject.score.score import compute_loss_df
+from hltproject.score.score import compute_loss
 
 #from dataset_utils import compute_loss_simo
 
@@ -44,12 +45,14 @@ class model9(model):
 
 
     #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
-    def evaluate(self, val_df ):
+    def predict(self, val_df ):
 
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
-    def fit(self, val_df , a ):
+    def evaluate(self, val_df ):
+        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
+    def fit(self, val_df , a ):
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
 
@@ -66,7 +69,7 @@ class model9(model):
 #UNIT TESTS
 if __name__ == "__main__":
 
-    '''
+    
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -77,7 +80,11 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"
+    '''
+
     
+    val_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
     
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
@@ -93,7 +100,7 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating ")
-    val_probas_no_i = model_9_inst.evaluate( test_path )
+    val_probas_no_i = model_9_inst.evaluate( val_examples_df )
 
     print(val_probas_no_i)
     test_path = "../datasets/gap-test.tsv"
@@ -110,7 +117,7 @@ if __name__ == "__main__":
     val_probas_df.to_csv('stage1_swag_only_my_w.csv', index=False)
 
 
-    #print(compute_loss_df(val_probas_df,test_path))
+    print(compute_loss("stage1_swag_only_my_w.csv",test_path))
 
     #for i in range(len(y_test)):
     #    y_one_hot[i, y_test[i]] = 1

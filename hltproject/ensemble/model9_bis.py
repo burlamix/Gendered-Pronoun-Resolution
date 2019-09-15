@@ -79,6 +79,8 @@ if __name__ == "__main__":
     val_path = "../datasets/gap-light.tsv"
     '''
     
+    val_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
@@ -88,13 +90,13 @@ if __name__ == "__main__":
     model_9_inst = model9 ("model_9/weights")
 
 
-    logger.info ("\n\ntraining model ")
-    model_9_inst.train(dev_path,val_path)
-    logger.info ("\n\n\n\ntraining finished ")
+    #logger.info ("\n\ntraining model ")
+    #model_9_inst.train(dev_path,val_path)
+    #logger.info ("\n\n\n\ntraining finished ")
 
 
     logger.info ("evaluating ")
-    val_probas_no_i = model_9_inst.evaluate( test_path )
+    val_probas_no_i = model_9_inst.evaluate( val_examples_df )
     logger.info ("evaluating finished")
 
     print(val_probas_no_i)
@@ -112,7 +114,7 @@ if __name__ == "__main__":
     val_probas_df.to_csv('stage1_swag_only_my_QA_w.csv', index=False)
 
 
-    #print(compute_loss_df(val_probas_df,test_path))
+    print(compute_loss_df('stage1_swag_only_my_QA_w.csv',test_path))
 
     #for i in range(len(y_test)):
     #    y_one_hot[i, y_test[i]] = 1

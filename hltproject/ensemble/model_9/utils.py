@@ -1977,7 +1977,8 @@ class SquadRunner:
 
     def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
 
-        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        #eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        eval_examples_df = eval_examples_name
 
         eval_examples_format = eval_examples_df.apply(lambda x: self.row_to_squad_example(x, False), axis=1).tolist()             #  test feature
         eval_examples = self.read_squad_examples_from_data(eval_examples_format, False, False)
