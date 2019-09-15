@@ -36,6 +36,7 @@ class model9(model):
         swag_runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
         self.runner = swag_runner
         self.weight_path = weight_path
+        self.classes_ = [0,1,2]
 
     def train(self, train_set, vallidation_set ):
 
@@ -65,7 +66,7 @@ class model9(model):
 #UNIT TESTS
 if __name__ == "__main__":
 
-    '''
+'''
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
