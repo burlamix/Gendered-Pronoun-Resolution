@@ -6,6 +6,8 @@ import numpy as np
 
 from common_interface import model
 from model_9.utils import BertSwagRunner
+from model_9.utils import SquadRunner
+
 from sklearn.metrics import log_loss
 
 import os 
@@ -23,21 +25,14 @@ logger = logging.getLogger ( __name__ )
 
 
 
-
-
-class model9(model):
-    '''
-        wrapper for 9th place model
+class model_b(model):
+    ''' wrapper for 9th place model
         code: https://github.com/rakeshchada/corefqa
         paper: https://arxiv.org/pdf/1906.03695.pdf
-
     '''
-    def __init__(self,weight_path):
+    def __init__(self):
 
-        swag_runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
-        self.runner = swag_runner
-        self.weight_path = weight_path
-        self.classes_ = [0,1,2]
+        None
 
     def train(self, train_set, vallidation_set ):
 
@@ -50,11 +45,12 @@ class model9(model):
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
     def evaluate(self, val_df ):
+
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
     def fit(self, val_df , a ):
-        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
+        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
@@ -64,6 +60,29 @@ class model9(model):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
+
+
+
+class model_swag(model_b):
+
+    def __init__(self,weight_path):
+
+        self.runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
+        self.weight_path = weight_path
+        self.classes_ = [0,1,2]
+
+
+
+class model_squad(model_b):
+
+    def __init__(self,weight_path):
+
+        self.runner = SquadRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
+        self.weight_path = weight_path
+        self.classes_ = [0,1,2]
+
+#------------------------------------------------------------------
+
 
 
 #UNIT TESTS
@@ -82,7 +101,7 @@ if __name__ == "__main__":
     val_path = "../datasets/gap-light.tsv"
     '''
 
-    
+
     val_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
     
@@ -92,7 +111,8 @@ if __name__ == "__main__":
 
 
     logger.info ("building model ")
-    model_9_inst = model9 ("model_9/weights")
+    model_squad_inst = model_squad ("model_9/weights")
+    model_swag_inst = model_swag ("model_9/weights")
 
 
     #logger.info ("training model ")
@@ -100,24 +120,22 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating ")
-    val_probas_no_i = model_9_inst.evaluate( val_examples_df )
-
-    print(val_probas_no_i)
-    test_path = "../datasets/gap-test.tsv"
+    val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
+    val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
 
 
 
-    #val_probas = np.insert(val_probas_no_i, 0, np.arange(2000), axis=1)
+    val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
-    #print(val_probas)
+    val_probas_df_squad.to_csv('stage1_swag_only_my_w.csv', index=False)
+    val_probas_df_swag.to_csv('stage1_swag_only_my_QA_w.csv', index=False)
 
-
-    val_probas_df= pd.DataFrame([test_df_prod.ID, val_probas_no_i[:,0], val_probas_no_i[:,1], val_probas_no_i[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-
-    val_probas_df.to_csv('stage1_swag_only_my_w.csv', index=False)
-
-
+    print("loss squad")
     print(compute_loss("stage1_swag_only_my_w.csv",test_path))
+
+    print("loss swag")
+    print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
 
     #for i in range(len(y_test)):
     #    y_one_hot[i, y_test[i]] = 1

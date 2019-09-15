@@ -21,9 +21,7 @@ val_path = pd.read_csv(val_pathx, delimiter="\t")#pd.read_csv(test_path, delimit
 
 '''
 
-
 print(val_path.shape)
-
 
 # create your Ensemble clf1 can be an EnsembleClassifier object too
 ens = Ensemble(classifiers=[mode_9, mode_9, mode_9]) 
