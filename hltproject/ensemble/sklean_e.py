@@ -1,54 +1,46 @@
 import numpy as np
+import pandas as pd
+import logging
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-
-from model9 import model9
-from sklearn.utils.estimator_checks import check_estimator
 from sklearn.svm import LinearSVC
+from sklearn.utils.estimator_checks import check_estimator
 
 from brew.base import Ensemble, EnsembleClassifier
 from brew.combination.combiner import Combiner
 
-import pandas as pd
+from model9 import model_squad
+from model9 import model_swag
+logger = logging.getLogger ( __name__ )
 
 
-
-val_pathx = "../datasets/gap-light.tsv"
-
-mode_9 = model9("model_9/weights")
-val_path = pd.read_csv(val_pathx, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
-
+test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
+dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
+val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
 '''
 
-print(val_path.shape)
-
-# create your Ensemble clf1 can be an EnsembleClassifier object too
-ens = Ensemble(classifiers=[mode_9, mode_9, mode_9]) 
- 
-# create your Combiner (combination rule)
-# it can be 'min', 'max', 'majority_vote' ...
-cmb = Combiner(rule='mean')
- 
-# and now, create your Ensemble Classifier
-ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
- 
-# assuming you have a X, y data you can use
-ensemble_clf.fit(val_path, val_path)
-
-print("-----------d-----------")
-ensemble_clf.predict(val_path)
- 
-
+#per trainare e testare piu velocemente, sono solo 5 esempi
+test_path = "../datasets/gap-light.tsv"
+dev_path = "../datasets/gap-light.tsv"
+val_path = "../datasets/gap-light.tsv"
 '''
 
+test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
+test_df_prod = test_df_prod.copy()
+test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
 
-mode_9 = model9("model_9/weights")
 
-#check_estimator(mode_9)  # passes
+test_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
-#val_path = "../datasets/gap-light.tsv"
 
+logger.info ("building model ")
+model_squad_inst = model_squad ("model_9/weights")
+model_swag_inst = model_swag ("model_9/weights")
+
+#check_estimator(model_squad_inst)  # passes
+#check_estimator(model_swag_inst)  # passes
 
 
 
@@ -58,19 +50,26 @@ clf3 = GaussianNB()
 
 
 
+eclf1 = VotingClassifier(estimators=[('squas', model_squad_inst), ('swag', model_swag_inst)], voting='hard')
+
+logger.info ("training ")
+test_examples_df_2 = test_examples_df["A"]#    dirty trick
+res = eclf1.fit(test_examples_df,test_examples_df_2)
+
+logger.info ("evaluating ")
+res = eclf1.predict(test_examples_df)
 
 
+val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
-eclf1 = VotingClassifier(estimators=[        ('lr', mode_9), ('rf', mode_9), ('gnb', mode_9)], voting='hard')
-
-print(val_path.shape)
+val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
 
 
-val_path_2 = val_path["A"]
+test_path = "../datasets/gap-test.tsv"
 
-print(val_path_2.shape)
+print("loss ensambled ")
+print(compute_loss("stage1_ee_my_pred.csv",test_path))
 
-eclf1 = eclf1.fit(val_path, val_path_2)
 
 #print(eclf1.predict(X))
 '''
@@ -118,5 +117,31 @@ ensemble_ens.predict(X)
 ensemble_ens.predict_proba(X)
 
 
+
+'''
+
+
+
+
+'''  l'altra libreria
+
+print(val_path.shape)
+
+# create your Ensemble clf1 can be an EnsembleClassifier object too
+ens = Ensemble(classifiers=[mode_9, mode_9, mode_9]) 
+ 
+# create your Combiner (combination rule)
+# it can be 'min', 'max', 'majority_vote' ...
+cmb = Combiner(rule='mean')
+ 
+# and now, create your Ensemble Classifier
+ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
+ 
+# assuming you have a X, y data you can use
+ensemble_clf.fit(val_path, val_path)
+
+print("-----------d-----------")
+ensemble_clf.predict(val_path)
+ 
 
 '''

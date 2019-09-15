@@ -16,7 +16,6 @@ print(dir_path)
 
 from hltproject.score.score import compute_loss_df
 
-#from dataset_utils import compute_loss_simo
 
 logger = logging.getLogger ( __name__ )
 
@@ -33,18 +32,13 @@ class model9(model):
         self.weight_path = weight_path
 
     def train(self, train_set, vallidation_set ):
-
         self.runner.train( train_set, vallidation_set, self.weight_path, n_splits=4)
 
     def evaluate(self, val_df ):
-    
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
-    
     
     def fit(self, val_df , a ):
-
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
-
 
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"

@@ -48,9 +48,9 @@ class model_b(model):
 
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
 
-    def fit(self, val_df , a ):
+    def fit(self, train_set , vallidation_set ):
 
-        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
+        self.runner.train( train_set, vallidation_set, self.weight_path, n_splits=4)
 
     def get_params(self, deep=True):
         # suppose this estimator has parameters "alpha" and "recursive"
@@ -130,6 +130,9 @@ if __name__ == "__main__":
 
     val_probas_df_squad.to_csv('stage1_swag_only_my_w.csv', index=False)
     val_probas_df_swag.to_csv('stage1_swag_only_my_QA_w.csv', index=False)
+
+
+    test_path = "../datasets/gap-test.tsv"
 
     print("loss squad")
     print(compute_loss("stage1_swag_only_my_w.csv",test_path))
