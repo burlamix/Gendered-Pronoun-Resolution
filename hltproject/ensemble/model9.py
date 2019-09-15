@@ -69,7 +69,7 @@ class model_swag(model_b):
 
         self.runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
         self.weight_path = weight_path
-        self.classes_ = [0,1,2]
+        self.classes_ = 3
 
 
 
@@ -79,7 +79,7 @@ class model_squad(model_b):
 
         self.runner = SquadRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
         self.weight_path = weight_path
-        self.classes_ = [0,1,2]
+        self.classes_ = 3
 
 #------------------------------------------------------------------
 

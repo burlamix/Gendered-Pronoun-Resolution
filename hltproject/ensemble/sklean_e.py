@@ -68,7 +68,7 @@ ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
 # assuming you have a X, y data you can use
 #ensemble_clf.fit(test_examples_df, test_examples_df_2)
 
-print("-----------d-----------")
+
 res = ensemble_clf.predict(test_examples_df)
 
 
