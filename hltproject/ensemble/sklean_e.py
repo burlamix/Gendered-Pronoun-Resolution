@@ -43,13 +43,8 @@ model_swag_inst = model_swag ("model_9/weights")
 #check_estimator(model_swag_inst)  # passes
 
 
-
-clf1 = LogisticRegression(solver='lbfgs', multi_class='multinomial',                          random_state=1)
-clf2 = RandomForestClassifier(n_estimators=50, random_state=1)
-clf3 = GaussianNB()
-
-
-
+'''
+#sklean
 eclf1 = VotingClassifier(estimators=[('squas', model_squad_inst), ('swag', model_swag_inst)], voting='hard')
 
 logger.info ("training ")
@@ -59,8 +54,26 @@ res = eclf1.fit(test_examples_df,test_examples_df_2)
 logger.info ("evaluating ")
 res = eclf1.predict(test_examples_df)
 
+'''
+# create your Ensemble clf1 can be an EnsembleClassifier object too
+ens = Ensemble(classifiers=[model_squad_inst, model_swag_inst]) 
+ 
+# create your Combiner (combination rule)
+# it can be 'min', 'max', 'majority_vote' ...
+cmb = Combiner(rule='mean')
+ 
+# and now, create your Ensemble Classifier
+ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
+ 
+# assuming you have a X, y data you can use
+#ensemble_clf.fit(test_examples_df, test_examples_df_2)
+
+print("-----------d-----------")
+res = ensemble_clf.predict(test_examples_df)
+
 
 val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
 
 val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
 
@@ -123,12 +136,11 @@ ensemble_ens.predict_proba(X)
 
 
 
-'''  l'altra libreria
+ # l'altra libreria
 
-print(val_path.shape)
 
 # create your Ensemble clf1 can be an EnsembleClassifier object too
-ens = Ensemble(classifiers=[mode_9, mode_9, mode_9]) 
+ens = Ensemble(classifiers=[mode_9, mode_9]) 
  
 # create your Combiner (combination rule)
 # it can be 'min', 'max', 'majority_vote' ...
@@ -144,4 +156,3 @@ print("-----------d-----------")
 ensemble_clf.predict(val_path)
  
 
-'''
