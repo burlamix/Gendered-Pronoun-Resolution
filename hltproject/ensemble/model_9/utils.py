@@ -680,6 +680,7 @@ class BertSwagRunner:
        
     def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
 
+        print("------------------")
         eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
 
