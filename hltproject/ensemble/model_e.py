@@ -76,13 +76,13 @@ if __name__ == "__main__":
 
 
     print("1")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
 
-    val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
+    #val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
 
 
-    test_path = "../datasets/gap-test.tsv"
+    #test_path = "../datasets/gap-test.tsv"
 
     print("loss ensambled ")
     print(compute_loss("stage1_ee_my_pred.csv",test_path))
