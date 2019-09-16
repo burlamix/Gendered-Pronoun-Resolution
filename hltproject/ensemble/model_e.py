@@ -1,6 +1,7 @@
 
 import logging
 import os
+import pickle
 
 from common_interface import model
 from model_9.utils import *
@@ -27,7 +28,7 @@ class model_e(model):
 
 
 
-    def evaluate(self,dataset):
+    def evaluate(self,dataset,combination="mean"):
 
         risultati = []
 
@@ -35,11 +36,24 @@ class model_e(model):
             print("-")
             risultati.append(modello.evaluate(dataset))
 
+        with open('array_evalutation.pkl', 'wb') as output:
+            pickle.dump(risultati, output, pickle.HIGHEST_PROTOCOL)
         #qui decido come fare ensambling media semplice?
         final_preds = np.mean(risultati, axis=0)
 
-        return final_preds
+        '''
+        if combination == "mean":
+            return np.mean(risultati, axis=0)
 
+        elif combination == "min":
+            return np.mean(risultati, axis=0)
+
+        elif combination == "max":
+            return np.mean(risultati, axis=0)
+
+        return np.mean(risultati, axis=0)
+        '''
+        return final_preds
 
 if __name__ == "__main__":
 
