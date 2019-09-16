@@ -6,6 +6,7 @@ from common_interface import model
 from model_9.utils import *
 #from model9 import model9
 #from model_7.Step1_preprocessing import original_notebook_preprocessing
+from hltproject.score.score import compute_loss
 
 from model9 import model_squad
 from model9 import model_swag
