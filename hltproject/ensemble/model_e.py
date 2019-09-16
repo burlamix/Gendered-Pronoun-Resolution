@@ -66,7 +66,7 @@ if __name__ == "__main__":
     model_e_inst = model_e(modelli)
 
 
-    res = model_e_inst.evaluate(test_examples_df)
+    #res = model_e_inst.evaluate(test_examples_df)
 
 
 
@@ -86,3 +86,10 @@ if __name__ == "__main__":
 
     print("loss ensambled ")
     print(compute_loss("stage1_ee_my_pred.csv",test_path))
+
+
+    print("loss squad")
+    print(compute_loss("stage1_swag_only_my_w.csv",test_path))
+
+    print("loss swag")
+    print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
