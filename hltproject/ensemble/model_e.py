@@ -80,7 +80,7 @@ if __name__ == "__main__":
     model_e_inst = model_e(modelli)
 
 
-    #res = model_e_inst.evaluate(test_examples_df)
+    res = model_e_inst.evaluate(test_examples_df)
 
 
 
