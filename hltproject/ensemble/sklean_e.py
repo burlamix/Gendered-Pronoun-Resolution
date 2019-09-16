@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import logging
+from common_interface import model
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
@@ -14,6 +15,50 @@ from brew.combination.combiner import Combiner
 from model9 import model_squad
 from model9 import model_swag
 logger = logging.getLogger ( __name__ )
+
+
+class ensambler(model):
+    ''' wrapper for 9th place model
+        code: https://github.com/rakeshchada/corefqa
+        paper: https://arxiv.org/pdf/1906.03695.pdf
+    '''
+    def __init__(self,models):
+
+        self.models = models
+
+    def train(self, train_set, vallidation_set ):
+
+        for model in self.models:
+            model.train( train_set, vallidation_set )
+
+
+    #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
+    def predict(self, val_df ):
+
+        result = []
+        for model in self.models:
+            result.append(model.predict( val_df))
+
+        res=np.mean(result, axis=0)
+        return res
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
@@ -56,21 +101,25 @@ res = eclf1.predict(test_examples_df)
 
 '''
 # create your Ensemble clf1 can be an EnsembleClassifier object too
-ens = Ensemble(classifiers=[model_squad_inst, model_swag_inst]) 
+#ens = Ensemble(classifiers=[model_squad_inst, model_swag_inst]) 
  
 # create your Combiner (combination rule)
 # it can be 'min', 'max', 'majority_vote' ...
-cmb = Combiner(rule='mean')
+#cmb = Combiner(rule='mean')
  
 # and now, create your Ensemble Classifier
-ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
+#ensemble_clf = EnsembleClassifier(ensemble=ens, combiner=cmb)
  
 # assuming you have a X, y data you can use
 #ensemble_clf.fit(test_examples_df, test_examples_df_2)
 
 
-res = ensemble_clf.predict(test_examples_df)
+#res = ensemble_clf.predict(test_examples_df)
+ensambler([model_squad_inst,model_swag_inst])
 
+print("1")
+res=ensambler.predict(test_examples_df)
+print("2")
 
 val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 

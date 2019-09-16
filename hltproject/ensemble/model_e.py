@@ -4,9 +4,12 @@ import os
 
 from common_interface import model
 from model_9.utils import *
-from model9 import model9
+#from model9 import model9
 #from model_7.Step1_preprocessing import original_notebook_preprocessing
 
+from model9 import model_squad
+from model9 import model_swag
+logger = logging.getLogger ( __name__ )
 
 
 
@@ -23,12 +26,13 @@ class model_e(model):
 
 
 
-    def evaluate(dataset, modelli_pesi):
+    def evaluate(self,dataset):
 
         risultati = []
 
         for modello in modelli:
-            risultati.append(modello.evaluate(test_path))
+            print("-")
+            risultati.append(modello.evaluate(dataset))
 
         #qui decido come fare ensambling media semplice?
         final_preds = np.mean(risultati, axis=0)
@@ -38,7 +42,7 @@ class model_e(model):
 
 if __name__ == "__main__":
 
-    '''
+
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -47,17 +51,37 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"
+    '''
+    test_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
 
-    modelli = []
+    logger.info ("building model ")
+    model_squad_inst = model_squad ("model_9/weights")
+    model_swag_inst = model_swag ("model_9/weights")
 
-    modelli.append(model9("model_9/weights"))
-    modelli.append(model9("model_9/weights"))
-    modelli.append(model9("model_9/weights"))
+    modelli = [model_squad_inst,model_swag_inst]
 
-
+    logger.info ("building model ")
     model_e_inst = model_e(modelli)
 
 
-    final_predictions = model_e_inst.evaluate(test_path)
+    res = model_e_inst.evaluate(test_examples_df)
 
+
+
+    test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
+    test_df_prod = test_df_prod.copy()
+    test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
+
+
+    print("1")
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
+
+    val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
+
+
+    test_path = "../datasets/gap-test.tsv"
+
+    print("loss ensambled ")
+    print(compute_loss("stage1_ee_my_pred.csv",test_path))
