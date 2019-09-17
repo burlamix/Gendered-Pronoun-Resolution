@@ -2174,7 +2174,7 @@ class GAPBot(BaseBot):
         return loss
 
 class BERTSpanExtractor:
-    def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case=True, learning_rate=1e-5, n_epochs=30, train_batch_size=10, predict_batch_size=32):
+    def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case=True, learning_rate=1e-5, n_epochs=10, train_batch_size=10, predict_batch_size=32):
             #self.dev_df = self.extract_target(dev_df)
             #self.val_df = self.extract_target(val_df)
             #self.test_df = self.extract_target(test_df)
@@ -2186,7 +2186,9 @@ class BERTSpanExtractor:
                                                            never_split = ("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"))
             self.learning_rate = learning_rate
             self.n_epochs = n_epochs
-            self.device = torch.device("cpu")
+            #self.device = torch.device("cpu")
+            self.device = torch.device("cuda" if torch.cuda.is_available() and not self.no_cuda else "cpu")
+
         
     def extract_target(self, df):
         df['target'] = [get_class_label(aco, bco) for aco, bco in zip(df['A-coref'], df['B-coref'])]
@@ -2363,6 +2365,7 @@ class BERTSpanExtractor:
         kf = StratifiedKFold(n_splits, shuffle=False, random_state=42)
 
         val_preds, test_preds, val_ys, val_losses = [], [], [], []
+        zi=0
         for train_index, valid_index in kf.split(kfold_data, kfold_data["gender"]):
             print("=" * 20)
             print(f"Fold {len(val_preds) + 1}")
