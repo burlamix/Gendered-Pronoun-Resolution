@@ -2425,6 +2425,9 @@ class BERTSpanExtractor:
             gc.collect()
             steps_per_epoch = len(train_loader) 
             n_steps = steps_per_epoch * self.n_epochs
+
+            print("\n\ntrain inside boy model ")
+
             bot.train(
                 n_steps,
                 log_interval=steps_per_epoch // 2,
@@ -2433,6 +2436,7 @@ class BERTSpanExtractor:
                     optimizer, 20, ratio=2, steps_per_cycle=steps_per_epoch * 100)
             )
             # Load the best checkpoint
+            print("\n\nload model ")
             bot.load_model(bot.best_performers[0][1])
             bot.remove_checkpoints(keep=0)    
 

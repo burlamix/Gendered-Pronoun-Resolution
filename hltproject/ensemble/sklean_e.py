@@ -118,9 +118,9 @@ res = eclf1.predict(test_examples_df)
 #res = ensemble_clf.predict(test_examples_df)
 ensambler([model_squad_inst,model_swag_inst])
 
-#print("1")
-#res=ensambler.predict(test_examples_df)
-#print("2")
+print("1")
+res=ensambler.predict(test_examples_df)
+print("2")
 
 val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
@@ -131,7 +131,7 @@ val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
 test_path = "../datasets/gap-test.tsv"
 
 print("loss ensambled ")
-print(log_loss("stage1_ee_my_pred.csv",test_path))
+print(compute_loss("stage1_ee_my_pred.csv",test_path))
 
 
 #print(eclf1.predict(X))

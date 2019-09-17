@@ -7,6 +7,7 @@ import numpy as np
 from common_interface import model
 from model_9.utils import BertSwagRunner
 from model_9.utils import SquadRunner
+from model_9.utils import BERTSpanExtractor
 
 from sklearn.metrics import log_loss
 
@@ -36,6 +37,7 @@ class model_b(model):
 
     def train(self, train_set, vallidation_set ):
 
+        print("!")
         self.runner.train( train_set, vallidation_set, self.weight_path, n_splits=4)
 
 
@@ -81,6 +83,13 @@ class model_squad(model_b):
         self.weight_path = weight_path
         self.classes_ = [3]
 
+class model_SpanExtractor(model_b):
+
+    def __init__(self,weight_path):
+
+        self.runner = BERTSpanExtractor(None, None, None,  bert_model='bert-large-uncased')
+        self.weight_path = weight_path
+        self.classes_ = [3]
 #------------------------------------------------------------------
 
 
@@ -88,7 +97,7 @@ class model_squad(model_b):
 #UNIT TESTS
 if __name__ == "__main__":
 
-    
+
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -111,20 +120,23 @@ if __name__ == "__main__":
 
 
     logger.info ("building model ")
-    model_squad_inst = model_squad ("model_9/weights")
-    model_swag_inst = model_swag ("model_9/weights")
+    #model_squad_inst = model_squad ("model_9/weights")
+    #model_swag_inst = model_swag ("model_9/weights")
+    model_SpanExtractor_inst = model_SpanExtractor ("model_9/weights")
 
 
-    #logger.info ("training model ")
-    #model_9_inst.train(dev_path,val_path)
+
+    logger.info ("training model ")
+    model_SpanExtractor_inst.train(dev_path,val_path)
 
 
     logger.info ("evaluating ")
-    val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
-    val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
+    #val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
+    #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
+    #val_probas_no_i_swag = model_SpanExtractor_inst.evaluate( val_examples_df )
 
 
-
+    exit()
     val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
