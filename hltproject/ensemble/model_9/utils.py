@@ -2186,11 +2186,7 @@ class BERTSpanExtractor:
                                                            never_split = ("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]"))
             self.learning_rate = learning_rate
             self.n_epochs = n_epochs
-            #self.device = torch.device("cpu")
-            self.no_cuda = False
-
-            self.device = torch.device("cuda" if torch.cuda.is_available() and not self.no_cuda else "cpu")
-
+            self.device = torch.device("cpu")
         
     def extract_target(self, df):
         df['target'] = [get_class_label(aco, bco) for aco, bco in zip(df['A-coref'], df['B-coref'])]
