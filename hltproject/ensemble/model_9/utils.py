@@ -2187,6 +2187,8 @@ class BERTSpanExtractor:
             self.learning_rate = learning_rate
             self.n_epochs = n_epochs
             #self.device = torch.device("cpu")
+            self.no_cuda = False
+
             self.device = torch.device("cuda" if torch.cuda.is_available() and not self.no_cuda else "cpu")
 
         
