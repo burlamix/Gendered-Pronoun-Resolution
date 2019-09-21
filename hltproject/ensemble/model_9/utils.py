@@ -680,7 +680,9 @@ class BertSwagRunner:
        
     def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
 
-        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        print("------------------")
+        eval_examples_df = eval_examples_name
+        #eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
 
 
         eval_examples = eval_examples_df.apply(lambda x: self.row_to_swag_example(x, not is_test), axis=1).tolist()
@@ -1975,7 +1977,8 @@ class SquadRunner:
 
     def my_evaluate(self, eval_examples_name, weight_folder_path, is_test=False):
 
-        eval_examples_df = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        # eval_examples_df.apply = pd.read_csv(eval_examples_name, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
+        eval_examples_df = eval_examples_name
 
         eval_examples_format = eval_examples_df.apply(lambda x: self.row_to_squad_example(x, False), axis=1).tolist()             #  test feature
         eval_examples = self.read_squad_examples_from_data(eval_examples_format, False, False)
@@ -2171,7 +2174,7 @@ class GAPBot(BaseBot):
         return loss
 
 class BERTSpanExtractor:
-    def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case=True, learning_rate=1e-5, n_epochs=30, train_batch_size=10, predict_batch_size=32):
+    def __init__(self, dev_df, val_df, test_df, bert_model = 'bert-large-uncased', do_lower_case=True, learning_rate=1e-5, n_epochs=10, train_batch_size=10, predict_batch_size=32):
             #self.dev_df = self.extract_target(dev_df)
             #self.val_df = self.extract_target(val_df)
             #self.test_df = self.extract_target(test_df)
@@ -2360,6 +2363,7 @@ class BERTSpanExtractor:
         kf = StratifiedKFold(n_splits, shuffle=False, random_state=42)
 
         val_preds, test_preds, val_ys, val_losses = [], [], [], []
+        zi=0
         for train_index, valid_index in kf.split(kfold_data, kfold_data["gender"]):
             print("=" * 20)
             print(f"Fold {len(val_preds) + 1}")
@@ -2422,6 +2426,9 @@ class BERTSpanExtractor:
             gc.collect()
             steps_per_epoch = len(train_loader) 
             n_steps = steps_per_epoch * self.n_epochs
+
+            print("\n\ntrain inside boy model ")
+
             bot.train(
                 n_steps,
                 log_interval=steps_per_epoch // 2,
@@ -2430,6 +2437,7 @@ class BERTSpanExtractor:
                     optimizer, 20, ratio=2, steps_per_cycle=steps_per_epoch * 100)
             )
             # Load the best checkpoint
+            print("\n\nload model ")
             bot.load_model(bot.best_performers[0][1])
             bot.remove_checkpoints(keep=0)    
 
