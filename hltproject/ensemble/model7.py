@@ -47,15 +47,15 @@ class Model7(model):
         if not self.train_set or not self.dev_set:
             raise RuntimeError ("model7: call train() before evaluate()")
 
-        original_notebook_preprocessing (False, weight_folder_path, val_set)
+        #original_notebook_preprocessing (False, weight_folder_path, val_set)
         
-        # copyfile ( "model_7/gap-development-corrected-74.tsv", weight_folder_path + "/input/" + 'gap-development-corrected-74.tsv' )
-        # copyfile ( "model_7/gap-test-val-85.tsv", weight_folder_path + "/input/" + 'gap-test-val-85.tsv' )
-        # copyfile ( "model_7/sample_submission_stage_1.csv", weight_folder_path + "/input/" + 'sample_submission_stage_1.csv' )
+        copyfile ( "model_7/gap-development-corrected-74.tsv", weight_folder_path + "/input/" + 'gap-development-corrected-74.tsv' )
+        copyfile ( "model_7/gap-test-val-85.tsv", weight_folder_path + "/input/" + 'gap-test-val-85.tsv' )
+        copyfile ( "model_7/sample_submission_stage_1.csv", weight_folder_path + "/input/" + 'sample_submission_stage_1.csv' )
 
-        # for all_train in [ False, True ]:
-        #     for CASED in [ True, False ]:
-        #         original_notebook_e2e ( all_train, CASED, weight_folder_path, self.train_set, self.dev_set, val_set )
+        for all_train in [ False, True ]:
+            for CASED in [ True, False ]:
+                original_notebook_e2e ( all_train, CASED, weight_folder_path, self.train_set, self.dev_set, val_set )
 
 #RUN the model
 if __name__ == "__main__":
