@@ -409,7 +409,7 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
 
 
     logger.info ("Running bert")
-    for CASED in [False]:  
+    for CASED in [True, False]:  
         logger.info ("CASED {}".format(CASED))
         for layer in ["-3","-4"]:
             logger.info ("layer {}".format(layer))
