@@ -144,7 +144,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   d_X_test = {}     # dict for test features
   new_emb_df_d = {} # dict for train embeddings (to be converted to features later after removing NA)
   
-  for TTA_suffix in [''] + TTA_suffixes:
+  for TTA_suffix in ['_'] + TTA_suffixes:
     gc.collect()
     
     logger.info ("reading embeddings datasets: fname: {}".format( EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+json_suffix ))
