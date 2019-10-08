@@ -358,9 +358,9 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
       gc.collect()
   
       if all_train:
-        sub_all = pd.concat([pd.read_table(path+'input/gap-development.tsv',usecols=['ID']),
-                             pd.read_table(path+'input/gap-test.tsv',usecols=['ID']),
-                             pd.read_table(path+'input/gap-validation.tsv',usecols=['ID']).iloc[val_idx]]).\
+        sub_all = pd.concat([pd.read_table(path+'/input/gap-development.tsv',usecols=['ID']),
+                             pd.read_table(path+'/input/gap-test.tsv',usecols=['ID']),
+                             pd.read_table(path+'/input/gap-validation.tsv',usecols=['ID']).iloc[val_idx]]).\
                   reset_index(drop=True).drop(bad_rows)
         sub_all['A']=0; sub_all['B']=0; sub_all['NEITHER']=0
         sub_all_d = {}
@@ -407,7 +407,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   
               model = End2End_NCR(word_input_shape=X_train_fold_d['orig'][0].shape[1], dist_shape=X_train_fold_d['orig'][3].shape[1]).build()
               model.compile(optimizer=optimizers.Adam(lr=lr), loss="sparse_categorical_crossentropy")
-              file_path = path + 'wts/e2e' + suffix + "_{}{}{}.hdf5".format(run,fold_n,fold_n_inner)
+              file_path = path + '/wts/e2e' + suffix + "_{}{}{}.hdf5".format(run,fold_n,fold_n_inner)
               check_point = callbacks.ModelCheckpoint(file_path, monitor = "val_loss", verbose = 0, save_best_only = True, mode = "min")
               early_stop = callbacks.EarlyStopping(monitor = "val_loss", mode = "min", patience=patience, restore_best_weights = True)    
               model.fit(X_tr, y_tr, batch_size=batch_size, epochs=epochs, validation_data=(X_val, y_val), verbose=0,
@@ -424,17 +424,17 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
       for TTA_suffix in TTA_suffixes:    
         # for Test
         if all_train:
-          sub_df = pd.read_csv(path+'input/gap-validation.tsv',sep='\t').iloc[sanity_idx][['ID']]
+          sub_df = pd.read_csv(path+'/input/gap-validation.tsv',sep='\t').iloc[sanity_idx][['ID']]
           sub_df['A'] = 1/3; sub_df['B'] = 1/3; sub_df['NEITHER'] = 1/3 
         else:
-          sub_df = pd.read_csv(path+'input/sample_submission_stage_1.csv')
+          sub_df = pd.read_csv(path+'/input/sample_submission_stage_1.csv')
   
         sub_df.loc[:,['A','B','NEITHER']] = pred_all_d[TTA_suffix]      
-        sub_df.to_csv(path+'sub/end2end'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_one_hot, pred_all_d[TTA_suffix])), index=False)        
+        sub_df.to_csv(path+'/sub/end2end'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_one_hot, pred_all_d[TTA_suffix])), index=False)        
         logger.info(f'run{run} {TTA_suffix} ' + "{:d}folds {:.5f}".format(n_fold, log_loss(y_one_hot, pred_all_d[TTA_suffix]))) # Calculate the log loss 
   
         if all_train:
-          sub_all_d[TTA_suffix].to_csv(path+'sub/oof'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_train_one_hot, sub_all_d[TTA_suffix].loc[:,['A','B','NEITHER']].values)), index=False)
+          sub_all_d[TTA_suffix].to_csv(path+'/sub/oof'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_train_one_hot, sub_all_d[TTA_suffix].loc[:,['A','B','NEITHER']].values)), index=False)
           logger.info(f'run{run} {TTA_suffix} ' + "{:d}folds OOF ================= {:.5f}".format(n_fold, log_loss(y_train_one_hot, sub_all_d[TTA_suffix].loc[:,['A','B','NEITHER']]))) # Calculate the log loss    
   
   #####  all_train
@@ -478,7 +478,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   
           model = End2End_NCR(word_input_shape=X_train_d['orig'][0].shape[1], dist_shape=X_train_d['orig'][3].shape[1]).build()
           model.compile(optimizer=optimizers.Adam(lr=lr), loss="sparse_categorical_crossentropy")
-          file_path = path + 'wts/e2e' + suffix + "_{}{}.hdf5".format(run,fold_n)
+          file_path = path + '/wts/e2e' + suffix + "_{}{}.hdf5".format(run,fold_n)
           check_point = callbacks.ModelCheckpoint(file_path, monitor = "val_loss", verbose = 0, save_best_only = True, mode = "min")
           early_stop = callbacks.EarlyStopping(monitor = "val_loss", mode = "min", patience=patience, restore_best_weights = True)    
           model.fit(X_tr, y_tr, batch_size=batch_size, epochs=epochs, validation_data=(X_val, y_val), verbose=0,
@@ -489,10 +489,10 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
             pred_all_d[TTA_suffix] += pred / n_fold  
   
       for TTA_suffix in TTA_suffixes:    
-        sub_df = pd.read_csv(path+'input/sample_submission_stage_1.csv')
+        sub_df = pd.read_csv(path+'/input/sample_submission_stage_1.csv')
   
         sub_df.loc[:,['A','B','NEITHER']] = pred_all_d[TTA_suffix]      
-        sub_df.to_csv(path+'sub/end2end'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_one_hot, pred_all_d[TTA_suffix])), index=False)        
+        sub_df.to_csv(path+'/sub/end2end'+suffix+'_'+TTA_suffix+'_run{:d}_{:.5f}.csv'.format(run,log_loss(y_one_hot, pred_all_d[TTA_suffix])), index=False)        
         print(f'run{run} {TTA_suffix} ' + "{:d}folds {:.5f}".format(n_fold, log_loss(y_one_hot, pred_all_d[TTA_suffix]))) # Calculate the log loss 
   
   
