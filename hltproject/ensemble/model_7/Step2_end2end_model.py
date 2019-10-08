@@ -147,20 +147,16 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   for TTA_suffix in [''] + TTA_suffixes:
     gc.collect()
     
-    logger.info ("reading embeddings datasets: dev1 fname: {}".format(EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+'_1'+json_suffix))
+    logger.info ("reading embeddings datasets: fname: {}".format( EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+json_suffix ))
 
-    df_dev1 = pd.read_json(EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+'_1'+json_suffix).sort_index()
-    df_dev2 = pd.read_json(EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+'_2'+json_suffix).sort_index()
-    df_test1= pd.read_json(EMBEDDINGS_FILES_PREFIX.format( test_basename )+suffix+TTA_suffix+'_1'+json_suffix).sort_index()
-    df_test2= pd.read_json(EMBEDDINGS_FILES_PREFIX.format( test_basename )+suffix+TTA_suffix+'_2'+json_suffix).sort_index()
+    df_dev1 = pd.read_json(EMBEDDINGS_FILES_PREFIX.format( dev_basename )+suffix+TTA_suffix+json_suffix).sort_index()
+    df_test1= pd.read_json(EMBEDDINGS_FILES_PREFIX.format( test_basename )+suffix+TTA_suffix+json_suffix).sort_index()
     df_val =  pd.read_json(EMBEDDINGS_FILES_PREFIX.format( val_basename )+suffix+TTA_suffix+json_suffix).sort_index()  
     
     if not all_train:       
       new_emb_df0 = pd.concat([df_test1.sort_index(),\
-                               df_test2.sort_index(),\
                                df_val.sort_index()]).reset_index(drop=True).copy()
-      test_emb0 = pd.concat([df_dev1.sort_index(),\
-                             df_dev2.sort_index()]).reset_index(drop=True).copy()
+      test_emb0 = pd.concat([df_dev1.sort_index()]).reset_index(drop=True).copy()
   
     if all_train:  
       # leave 54 as sanity check
@@ -170,9 +166,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
       
       test_emb0 = df_val.iloc[sanity_idx].reset_index(drop=True).copy()  
       new_emb_df0 = pd.concat([df_dev1.sort_index(),
-                              df_dev2.sort_index(),
                               df_test1.sort_index(),
-                              df_test2.sort_index(),
                               df_val.sort_index().iloc[val_idx]]).reset_index(drop=True).copy() 
   
     # put into dictionary
