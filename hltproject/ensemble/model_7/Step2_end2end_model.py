@@ -170,7 +170,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
                               df_val.sort_index().iloc[val_idx]]).reset_index(drop=True).copy() 
   
     # put into dictionary
-    key = 'orig' if TTA_suffix=='' else TTA_suffix.strip('_')    
+    key = 'orig' if TTA_suffix=='_' else TTA_suffix.strip('_')    
   
     X_test0, y_test = create_input(test_emb0, test_dist_df)    
     d_X_test[key] = X_test0.copy()
