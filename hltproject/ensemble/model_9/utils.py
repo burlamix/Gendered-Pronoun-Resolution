@@ -2451,7 +2451,7 @@ class BERTSpanExtractor:
             #test_preds.append(torch.softmax(bot.predict(test_loader), -1).clamp(1e-4, 1-1e-4).cpu().numpy())
 
             with open(weight_folder_path+"/weights_SEQ_fold_"+str(zi)+".mw", 'wb') as output:
-                pickle.dump(bot, output, pickle.HIGHEST_PROTOCOL)
+                pickle.dump(model, output, pickle.HIGHEST_PROTOCOL)
             zi=zi+1
 
             del model
