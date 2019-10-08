@@ -34,6 +34,7 @@ class Model7(model):
         os.makedirs(weight_folder_path+"/input", exist_ok=True)
         os.makedirs(weight_folder_path+"/embeddings", exist_ok=True)
         os.makedirs(weight_folder_path+"/sub", exist_ok=True)
+        os.makedirs(weight_folder_path+"/wts", exist_ok=True)
 
         logger.info ("preprocessing train set")
         # original_notebook_preprocessing (False, weight_folder_path, train_set)
