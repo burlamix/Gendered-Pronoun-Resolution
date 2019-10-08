@@ -240,8 +240,8 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   
   import keras.backend as K
   import keras
-  from keras.layers import Input, Dense, Embedding, Sequential, Activation, Dropout, Flatten, Multiply, Concatenate, Lambda
-  from keras.models import Model
+  from keras.layers import Input, Dense, Embedding, Activation, Dropout, Flatten, Multiply, Concatenate, Lambda
+  from keras.models import Model, Sequential
   from keras import optimizers
   from keras import callbacks
   
