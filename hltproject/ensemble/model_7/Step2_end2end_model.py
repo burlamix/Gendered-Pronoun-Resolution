@@ -36,8 +36,8 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
   EMBEDDINGS_FILES_PREFIX = path + "/embeddings/" + '{}' + '_'
   LINGUI_CSV_FNAME = path + "/output/" + '{}' + "_lingui_df.csv"
   DIST_CSV_FNAME = path + '/output/' + '{}' + '_dist_df.csv'
-  CORRECTED74_FNAME = path+'input/gap-development-corrected-74.tsv'
-  TEST_VAL85_FNAME = path+'input/gap-test-val-85.tsv'
+  CORRECTED74_FNAME = path+'/input/gap-development-corrected-74.tsv'
+  TEST_VAL85_FNAME = path+'/input/gap-test-val-85.tsv'
   
   dev_basename = os.path.basename (dev_input_fname).split('.')[0]
   test_basename = os.path.basename (test_input_fname).split('.')[0]
