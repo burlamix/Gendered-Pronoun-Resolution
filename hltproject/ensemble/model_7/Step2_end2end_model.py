@@ -408,7 +408,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
               model = End2End_NCR(word_input_shape=X_train_fold_d['orig'][0].shape[1], dist_shape=X_train_fold_d['orig'][3].shape[1]).build()
               model.compile(optimizer=optimizers.Adam(lr=lr), loss="sparse_categorical_crossentropy")
               file_path = path + '/wts/e2e' + suffix + "_{}{}{}.hdf5".format(run,fold_n,fold_n_inner)
-              check_point = callbacks.ModelCheckpoint(file_path, monitor = "val_loss", verbose = 0, save_best_only = True, mode = "min")
+              check_point = callbacks.ModelCheckpoint(file_path, monitor = "val_loss", verbose = 0, save_weights_only=True, save_best_only = True, mode = "min")
               early_stop = callbacks.EarlyStopping(monitor = "val_loss", mode = "min", patience=patience, restore_best_weights = True)    
               model.fit(X_tr, y_tr, batch_size=batch_size, epochs=epochs, validation_data=(X_val, y_val), verbose=0,
                         shuffle=True, callbacks = [check_point, early_stop])
