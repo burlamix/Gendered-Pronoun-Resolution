@@ -207,7 +207,7 @@ def original_notebook_e2e ( all_train, CASED, path, dev_input_fname, test_input_
         if None in new_emb_df_d[TTA_suffix].loc[i,col]:
           bad_rows.append(i)
           break
-    logger.info (TTA_suffix, 'bad_rows =', bad_rows)  
+    logger.info (TTA_suffix, 'bad_rows =' + str(bad_rows))  
     
   ## remove None
   
