@@ -6,6 +6,7 @@ from shutil import copyfile
 from common_interface import model
 from model_7.Step1_preprocessing import original_notebook_preprocessing
 from model_7.Step2_end2end_model import original_notebook_e2e
+from model_7.Step4_inference import original_notebook_inference
 
 logger = logging.getLogger ( __name__ )
 
@@ -49,14 +50,19 @@ class Model7(model):
             raise RuntimeError ("model7: call train() before evaluate()")
 
         # original_notebook_preprocessing (False, weight_folder_path, val_set)
+        original_notebook_preprocessing (True, weight_folder_path, val_set)
         
-        copyfile ( "model_7/gap-development-corrected-74.tsv", weight_folder_path + "/input/" + 'gap-development-corrected-74.tsv' )
-        copyfile ( "model_7/gap-test-val-85.tsv", weight_folder_path + "/input/" + 'gap-test-val-85.tsv' )
-        copyfile ( "model_7/sample_submission_stage_1.csv", weight_folder_path + "/input/" + 'sample_submission_stage_1.csv' )
+        # copyfile ( "model_7/gap-development-corrected-74.tsv", weight_folder_path + "/input/" + 'gap-development-corrected-74.tsv' )
+        # copyfile ( "model_7/gap-test-val-85.tsv", weight_folder_path + "/input/" + 'gap-test-val-85.tsv' )
+        # copyfile ( "model_7/sample_submission_stage_1.csv", weight_folder_path + "/input/" + 'sample_submission_stage_1.csv' )
 
-        for all_train in [ False, True ]:
-            for CASED in [ True, False ]:
-                original_notebook_e2e ( all_train, CASED, weight_folder_path, self.train_set, self.dev_set, val_set )
+        # for all_train in [ False, True ]:
+        #     for CASED in [ True, False ]:
+        #         original_notebook_e2e ( all_train, CASED, weight_folder_path, self.train_set, self.dev_set, val_set )
+        
+        # original_notebook_inference ( weight_folder_path, val_set )
+
+
 
 #RUN the model
 if __name__ == "__main__":
