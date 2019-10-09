@@ -846,9 +846,9 @@ def original_notebook_preprocessing ( is_inference, path, input_tsv_fname ):
         
         ## fixed an input data error in row 1566 where "(t)he" is incorrectly tagged as pronoun
         ##   this is discussed and allowed in https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/89830
-        text = stage2_df.loc[1566,'Text']  
-        stage2_df.loc[1566,'Text'] = text = text[:313] + ' ' + text[313:]
-        stage2_df.loc[1566,'Pronoun-offset'] += 1
+        # text = stage2_df.loc[1566,'Text']  
+        # stage2_df.loc[1566,'Text'] = text = text[:313] + ' ' + text[313:]
+        # stage2_df.loc[1566,'Pronoun-offset'] += 1
         
         stage2_lingui_df = annotateSet(stage2_df, inference=True)
         stage2_lingui_df = post_process(stage2_lingui_df)
