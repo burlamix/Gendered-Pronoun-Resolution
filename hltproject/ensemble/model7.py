@@ -74,7 +74,9 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-test.tsv"
     dev_path = "../datasets/gap-development.tsv"
     val_path = "../datasets/gap-validation.tsv"
+
+    stage2_path = "../datasets/gap_validation_stage2.tsv"
     
     model7_instance = Model7 ()
     model7_instance.train ( test_path, dev_path, "model_7_weights")
-    model7_instance.evaluate (val_path, "model_7_weights" )
+    model7_instance.evaluate (stage2_path, "model_7_weights" )
