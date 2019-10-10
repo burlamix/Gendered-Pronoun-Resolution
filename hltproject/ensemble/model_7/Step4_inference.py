@@ -28,6 +28,7 @@ def original_notebook_inference ( path, input_fname ):
 
   path = path + '/'
   input_tsv = path+'input/'+os.path.basename (input_fname)
+  basename = os.path.basename (input_fname).split('.')[0]
 
   logger.info ("original_notebook_inference input_tsv: {}".format(input_fname))
 
@@ -87,7 +88,7 @@ def original_notebook_inference ( path, input_fname ):
       num_test = pd.read_csv(input_tsv,sep='\t').shape[0]
       n_chunk = int(np.ceil(num_test/1000))
       for i in range(n_chunk):
-        df_name = path+'output/contextual_embeddings_'+ os.path.basename(input_tsv).split('.')[0] + '_' + suffix +TTA_suffix+ f'_{i}'+ json_suffix
+        df_name = path+'embeddings/'+ os.path.basename(input_tsv).split('.')[0] + '_' + suffix +TTA_suffix+ f'_{i}'+ json_suffix
         logger.info ("loading stage2 dataframe {}".format ( df_name ))
         df_stage2_chunk =  pd.read_json(df_name).sort_index()  
         if i==0: df_stage2 = df_stage2_chunk.copy()
@@ -95,10 +96,10 @@ def original_notebook_inference ( path, input_fname ):
         
       stage2_emb0 = df_stage2.reset_index(drop=True).copy()  
 
-      stage2_dist_df = pd.read_csv(path+'output/stage2_dist_df.csv').reset_index(drop=True).copy()
+      stage2_dist_df = pd.read_csv(path+'output/'+basename+'_dist_df.csv').reset_index(drop=True).copy()
       if use_lingui_features:
-        stage2_lingui_df = pd.read_csv(path+'output/stage2_lingui_df.csv')
-        stage2_dist_df = pd.concat([pd.read_csv(path+'output/stage2_dist_df.csv')[['D_PA','D_PB']], stage2_lingui_df], axis=1)
+        stage2_lingui_df = pd.read_csv(path+'output/'+basename+'_lingui_df.csv')
+        stage2_dist_df = pd.concat([pd.read_csv(path+'output/'+basename+'_dist_df.csv')[['D_PA','D_PB']], stage2_lingui_df], axis=1)
 
       # put into dictionary
       key = 'orig' if TTA_suffix=='' else TTA_suffix.strip('_')    
@@ -135,7 +136,7 @@ def original_notebook_inference ( path, input_fname ):
           A, B, P = Input((self.word_input_shape,)), Input((self.word_input_shape,)), Input((self.word_input_shape,))
           inputs = [A, B, P]
           if use_lingui_features: 
-            num_lingui_features = pd.read_csv(path+'output/stage2_lingui_df.csv').shape[1]
+            num_lingui_features = pd.read_csv(path+'output/'+basename+'_lingui_df.csv').shape[1]
             dist_inputs = [Input((1,)) for i in range(num_lingui_features+2)]
           else: 
             dist1, dist2 = Input((self.dist_shape,)), Input((self.dist_shape,))
