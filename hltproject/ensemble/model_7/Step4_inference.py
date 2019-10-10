@@ -116,7 +116,6 @@ def original_notebook_inference ( path, input_fname ):
   import keras
   from keras import optimizers
   from keras import callbacks
-  from IPython.display import SVG
   from keras.utils.vis_utils import model_to_dot
 
   class End2End_NCR():
