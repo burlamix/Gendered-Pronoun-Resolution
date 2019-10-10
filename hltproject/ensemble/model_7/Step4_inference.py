@@ -75,10 +75,10 @@ def original_notebook_inference ( path, input_fname ):
     json_suffix = '_fix_long_text.json'
 
     TTA_suffixes = [ \
-                    '_Alice_Kate_John_Michael',
-                    '_Elizabeth_Mary_James_Henry',
-                    '_Kate_Elizabeth_Michael_James',
-                    '_Mary_Alice_Henry_John']
+                    'Alice_Kate_John_Michael',
+                    'Elizabeth_Mary_James_Henry',
+                    'Kate_Elizabeth_Michael_James',
+                    'Mary_Alice_Henry_John']
 
     d_X_test = {}     # dict for test features
 
