@@ -181,23 +181,22 @@ def original_notebook_inference ( path, input_fname ):
           
           return model
 
-  
+  n_fold = 5
+  n_run = 5
+  num_test = pd.read_csv(input_tsv,sep='\t').shape[0]
+
+  TTA_suffixes = \
+  ['Alice_Kate_John_Michael',
+  'Elizabeth_Mary_James_Henry',
+  'Kate_Elizabeth_Michael_James',
+  'Mary_Alice_Henry_John',
+  'orig']
+
+  pred_ensemble_end2end = np.zeros((num_test,3))
 
   if all_train:
     
-    n_fold = 5
-    n_run = 5
-    num_test = pd.read_csv(input_tsv,sep='\t').shape[0]
-
-    TTA_suffixes = \
-    ['Alice_Kate_John_Michael',
-    'Elizabeth_Mary_James_Henry',
-    'Kate_Elizabeth_Michael_James',
-    'Mary_Alice_Henry_John',
-    'orig']
-
-    pred_ensemble_end2end = np.zeros((num_test,3))
-
+    
     for CASED in [False,True]:
       gc.collect()
 
@@ -215,7 +214,7 @@ def original_notebook_inference ( path, input_fname ):
       pred_all_d = {} # to save 125 fold avg (for Test), 5 runs, 5 outer OOF, 5 inner early stop val
       for TTA_suffix in TTA_suffixes: pred_all_d[TTA_suffix] = np.zeros((num_test,3))     
 
-      print('------ start inference ------')
+      logger.info ('------ start inference ------')
 
       for run in tqdm(range(n_run)):  
         for fold in range(n_fold):
@@ -249,73 +248,6 @@ def original_notebook_inference ( path, input_fname ):
   out_csv_path = path + 'sub/sub_end2end_' + os.path.basename(input_tsv).split('.')[0] + '.csv'
   if os.path.exists(out_csv_path): os.remove(out_csv_path)
   sub_end2end.to_csv(out_csv_path, index=False)
-
-
-
-  if not all_train:
-
-    n_fold = 5
-    n_run = 5
-    num_test = pd.read_csv(input_tsv,sep='\t').shape[0]
-
-    TTA_suffixes = \
-    ['Alice_Kate_John_Michael',
-    'Elizabeth_Mary_James_Henry',
-    'Kate_Elizabeth_Michael_James',
-    'Mary_Alice_Henry_John',
-    'orig']
-
-    pred_ensemble_end2endB = np.zeros((num_test,3))
-
-    for CASED in [False,True]:
-      gc.collect()
-
-      d_X_test = load_stage2_features(CASED)
-      
-      model = End2End_NCR(word_input_shape=d_X_test['orig'][0].shape[1], dist_shape=d_X_test['orig'][3].shape[1]).build()
-
-      if CASED: 
-        wts_prefix = path + 'wts/e2e-4_CASED_LARGE_Aug4_sub_B_4400_'
-        ensemble_wts = [0.2, 0.2, 0.4, 0.1, 0.1]
-      else:     
-        wts_prefix = path + 'wts/e2e-4_LARGE_Aug4_sub_B_4400_'
-        ensemble_wts = [0.2, 0.2, 0.4, 0.0, 0.2]
-
-      pred_all_d = {} 
-      for TTA_suffix in TTA_suffixes: pred_all_d[TTA_suffix] = np.zeros((num_test,3))     
-
-      print('------ start inference ------')
-
-      for run in range(n_run):  
-        for fold in range(n_fold):
-          wts = wts_prefix + f'{run}{fold}.hdf5'
-          model.load_weights(wts)
-          for TTA_suffix in TTA_suffixes:   
-            pred = model.predict(x = d_X_test[TTA_suffix], verbose = 0)    
-            pred_all_d[TTA_suffix] += pred / n_fold / n_run         
-
-      pred_ensemble = np.zeros((num_test,3))    
-      print(ensemble_wts)
-      for i,TTA_suffix in enumerate(TTA_suffixes):    
-        pred_ensemble += ensemble_wts[i]*pred_all_d[TTA_suffix]
-
-      if not CASED: pred_ensemble_end2endB += pred_ensemble * 0.4
-      else:         pred_ensemble_end2endB += pred_ensemble * 0.6
-
-
-    assert pred_ensemble_end2endB.sum(axis=1).min() > 0.999 and pred_ensemble_end2endB.sum(axis=1).max() < 1.001    
-
-  ## read stage2 sample submission and write output csv 
-
-  sub = pd.read_csv(path+'input/sample_submission_stage_2.csv')
-
-
-  subB_end2end = sub.copy()
-  subB_end2end[['A','B','NEITHER']] = pred_ensemble_end2endB
-
-  out_csv_path = path + 'sub/subB_end2end_' + os.path.basename(input_tsv).split('.')[0] + '.csv'
-  if os.path.exists(out_csv_path): os.remove(out_csv_path)
-  subB_end2end.to_csv(out_csv_path, index=False)
 
   def parse_json(embeddings):
     '''
