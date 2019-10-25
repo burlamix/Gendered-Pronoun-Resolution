@@ -62,7 +62,10 @@ class Model7(model):
         
         original_notebook_inference ( weight_folder_path, val_set )
 
-
+    def evaluate(self, val_set, weight_folder_path="model_7_weights" ):
+            result = pd.read_csv("./model_7_submissions/sub_end2end_gap_validation_stage2.csv", delimiter=",")
+            #read predictions from file ./model_7_submissions/sub_end2end_gap_validation_stage2.csv and output them
+            return result
 
 #RUN the model
 if __name__ == "__main__":

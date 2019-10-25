@@ -41,11 +41,6 @@ class model_b(model):
         self.runner.train( train_set, vallidation_set, self.weight_path, n_splits=4)
 
 
-    #forse qui sarebbe meglio riuscire a salvare i pvari pesi tutti nello stesso pickle 
-    def predict(self, val_df ):
-
-        return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
-
     def evaluate(self, val_df ):
 
         return  self.runner.my_evaluate( val_df, self.weight_path, is_test=False)
@@ -126,8 +121,8 @@ if __name__ == "__main__":
 
 
 
-    logger.info ("training model ")
-    model_SpanExtractor_inst.train(dev_path,val_path)
+    #logger.info ("training model ")
+    #model_SpanExtractor_inst.train(dev_path,val_path)
 
 
     logger.info ("evaluating ")
@@ -135,6 +130,7 @@ if __name__ == "__main__":
     #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
     val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( val_examples_df )
 
+    print(val_probas_no_i_SpanExtractor)
 
     exit()
     #val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
