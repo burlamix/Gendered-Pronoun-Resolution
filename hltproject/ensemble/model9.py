@@ -116,8 +116,8 @@ if __name__ == "__main__":
 
     logger.info ("building model ")
     #model_squad_inst = model_squad ("model_9/weights")
-    #model_swag_inst = model_swag ("model_9/weights")
-    model_SpanExtractor_inst = model_SpanExtractor ("model_9/weights")
+    model_swag_inst = model_swag ("model_9/weights")
+    #model_SpanExtractor_inst = model_SpanExtractor ("model_9/weights")
 
 
 
