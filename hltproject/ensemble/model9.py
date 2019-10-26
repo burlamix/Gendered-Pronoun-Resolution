@@ -128,7 +128,7 @@ if __name__ == "__main__":
     logger.info ("evaluating ")
     #val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
     #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
-    val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( val_examples_df )
+    val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path )
 
     print(val_probas_no_i_SpanExtractor)
 
