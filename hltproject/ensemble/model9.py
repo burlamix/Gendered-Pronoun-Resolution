@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
 
     logger.info ("building model ")
-    #model_squad_inst = model_squad ("model_9/weights")
+    model_squad_inst = model_squad ("model_9/weights")
     model_swag_inst = model_swag ("model_9/weights")
     #model_SpanExtractor_inst = model_SpanExtractor ("model_9/weights")
 
@@ -126,20 +126,20 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating ")
-    #val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
+    val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
     val_probas_no_i_SpanExtractor = model_swag_inst.evaluate( val_examples_df )
     #val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path ) #questo prende un path gli altri prendono un pd
 
     print(val_probas_no_i_SpanExtractor)
 
-    exit()
-    #val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_SpanExtractor= pd.DataFrame([test_df_prod.ID, val_probas_no_i_SpanExtractor[:,0], val_probas_no_i_SpanExtractor[:,1], val_probas_no_i_SpanExtractor[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #exit()
+    val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #val_probas_df_SpanExtractor= pd.DataFrame([test_df_prod.ID, val_probas_no_i_SpanExtractor[:,0], val_probas_no_i_SpanExtractor[:,1], val_probas_no_i_SpanExtractor[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
 
     val_probas_df_squad.to_csv('stage1_swag_only_my_w.csv', index=False)
     val_probas_df_swag.to_csv('stage1_swag_only_my_QA_w.csv', index=False)
-    val_probas_df_SpanExtractor.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
+    #val_probas_df_SpanExtractor.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
 
 
     test_path = "../datasets/gap-test.tsv"
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
 
     print("SEQ squad")
-    print(compute_loss("stage1_swag_only_my_SEQ_w.csv",test_path))
+    #print(compute_loss("stage1_swag_only_my_SEQ_w.csv",test_path))
 
     #for i in range(len(y_test)):
     #    y_one_hot[i, y_test[i]] = 1
