@@ -37,7 +37,8 @@ def annotate_sentence ( sent ):
             P_off = -1
     
     print()
-    print (sent.id)
+    print (sent.id, sent.url.split('/')[-1])
+    print ()
     print (text_to_print)
 
     print()
