@@ -2,15 +2,14 @@
 import logging
 import os
 import pickle
+import math
 
 from common_interface import model
 from model_9.utils import *
-#from model9 import model9
-#from model_7.Step1_preprocessing import original_notebook_preprocessing
 from hltproject.score.score import compute_loss
-
 from model9 import model_squad
 from model9 import model_swag
+    
 logger = logging.getLogger ( __name__ )
 
 
@@ -35,8 +34,6 @@ def min_voting(valutaion_arrays):
 
     return new_ris
 
-
-
 def max_voting(valutaion_arrays):
 
     ris= np.asarray(valutaion_arrays)
@@ -58,6 +55,30 @@ def max_voting(valutaion_arrays):
 
     return new_ris
 
+def min_entropy(valutaion_arrays):
+
+    ris= np.asarray(valutaion_arrays)
+    new_ris= []
+
+    #per each example
+    for xid in range(ris.shape[1]):     
+
+        #for each model probab in each example
+        min_entropy = 99999999999999999999
+        for model_eval in ris[:, xid, :]:
+
+            tot=0
+            for x in model_eval:
+                tot = tot + (x*math.log2(x))
+
+            tot=tot*(-1)
+
+            if(tot<min_entropy):
+                a = model_eval
+
+        new_ris.append(a)
+
+    return new_ris
 
 
 class model_e(model):
@@ -92,8 +113,8 @@ class model_e(model):
         elif combination == "min":
             return np.asarray(min_voting(risultati))
 
-        elif combination == "mojority":
-            return np.mean(risultati, axis=0)
+        elif combination == "min_entropy":
+            return np.asarray(min_entropy(risultati))
 
         return np.mean(risultati, axis=0)
         
@@ -127,7 +148,7 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating model ")
-    res = model_e_inst.evaluate(test_examples_df,combination="min")
+    res = model_e_inst.evaluate(test_examples_df,combination="min_entropy")
 
 
 
