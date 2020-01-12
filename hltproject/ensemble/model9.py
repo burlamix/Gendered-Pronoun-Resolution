@@ -121,7 +121,8 @@ if __name__ == "__main__":
 
 
 
-    #logger.info ("training model ")
+    logger.info ("training model ")
+    model_squad_inst.train(dev_path,val_path)
     #model_SpanExtractor_inst.train(dev_path,val_path)
 
 
