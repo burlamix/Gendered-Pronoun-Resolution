@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating model ")
-    res = model_e_inst.evaluate(test_examples_df,combination="min_entropy")
+    res = model_e_inst.evaluate(test_examples_df,combination="mean")
 
 
 
