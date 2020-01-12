@@ -92,7 +92,7 @@ class model_SpanExtractor(model_b):
 #UNIT TESTS
 if __name__ == "__main__":
 
-    '''
+    
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-light.tsv"
     dev_path = "../datasets/gap-light.tsv"
     val_path = "../datasets/gap-light.tsv"
-
+	'''
 
 
     val_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
@@ -127,10 +127,10 @@ if __name__ == "__main__":
 
     logger.info ("evaluating ")
     val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
-    val_probas_no_i_SpanExtractor = model_swag_inst.evaluate( val_examples_df )
+    val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
     #val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path ) #questo prende un path gli altri prendono un pd
 
-    print(val_probas_no_i_SpanExtractor)
+    print(val_probas_no_i_swag)
 
     #exit()
     val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()

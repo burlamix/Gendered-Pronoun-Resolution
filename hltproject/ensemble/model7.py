@@ -1,6 +1,7 @@
 
 import logging
 import os
+import pandas as pd
 from shutil import copyfile
 
 from common_interface import model
@@ -81,5 +82,5 @@ if __name__ == "__main__":
     stage2_path = "../datasets/gap_validation_stage2.tsv"
     
     model7_instance = Model7 ()
-    model7_instance.train ( test_path, dev_path, "model_7_weights")
-    model7_instance.evaluate (stage2_path, "model_7_weights" )
+    #model7_instance.train ( test_path, dev_path, "model_7_weights")
+    print( model7_instance.evaluate (stage2_path, "model_7_weights" ))
