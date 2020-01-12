@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
 
     logger.info ("training model ")
-    model_squad_inst.train(dev_path,val_path)
+    model_squad_inst.train(dev_path,test_path)
     #model_SpanExtractor_inst.train(dev_path,val_path)
 
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     #val_probas_df_SpanExtractor.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
 
 
-    test_path = "../datasets/gap-test.tsv"
+    val_path = "../datasets/gap-test.tsv"
 
 
     print("loss squad")
