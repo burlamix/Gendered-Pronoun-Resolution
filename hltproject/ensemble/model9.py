@@ -115,9 +115,9 @@ if __name__ == "__main__":
 
 
     #per trainare e testare piu velocemente, sono solo 5 esempi
-    dev_path = "..ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
-    val_path  = "..ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
-    test_path = "..ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
+    dev_path = "../ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
+    val_path  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
+    test_path = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
 
     zxzx = "../datasets/gap-light.tsv"
 
