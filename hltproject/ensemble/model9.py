@@ -92,7 +92,7 @@ class model_SpanExtractor(model_b):
 #UNIT TESTS
 if __name__ == "__main__":
 
-    
+    ''' 
     test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
     val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
@@ -100,10 +100,16 @@ if __name__ == "__main__":
 
 
     #per trainare e testare piu velocemente, sono solo 5 esempi
-    test_path = "../datasets/gap-light.tsv"
-    dev_path = "../datasets/gap-light.tsv"
-    val_path = "../datasets/gap-light.tsv"
-	'''
+    test_path = "../datasets/gap-validation.tsv"
+    dev_path = "../datasets/gap-test.tsv"
+    val_path = "../datasets/gap-development.tsv"
+    zxzx = "../datasets/gap-light.tsv"
+
+
+
+
+
+    ### da qui test val e dev path sono corretti come tu pensi che siano utilizzati
 
 
     val_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
@@ -143,7 +149,7 @@ if __name__ == "__main__":
     #val_probas_df_SpanExtractor.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
 
 
-    val_path = "../datasets/gap-test.tsv"
+    #val_path = "../datasets/gap-test.tsv"
 
 
     print("loss squad")
