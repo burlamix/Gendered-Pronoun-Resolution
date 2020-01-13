@@ -151,7 +151,7 @@ if __name__ == "__main__":
     #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
     #val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path ) #questo prende un path gli altri prendono un pd
 
-    print(val_probas_no_i_swag)
+    print(val_probas_no_i_squad)
 
     #exit()
     val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
