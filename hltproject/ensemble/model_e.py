@@ -96,12 +96,12 @@ class model_e(model):
 
         risultati = []
 
-        #for modello in modelli:
-        ##    print("-")
-        ##    risultati.append(modello.evaluate(dataset))
+        for modello in modelli:
+            print("-")
+            risultati.append(modello.evaluate(dataset))
 
-        with open('array_evalutation.pkl', 'rb') as f:
-            risultati = pickle.load(f)
+        #with open('array_evalutation.pkl', 'rb') as f:
+         #   risultati = pickle.load(f)
 
         
         if combination == "mean":
