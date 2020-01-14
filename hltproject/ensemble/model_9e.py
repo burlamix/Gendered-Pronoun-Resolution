@@ -104,7 +104,7 @@ class model_9e(object):
 
     def evaluate(self, val_df ):
 
-        return  self.model_e.my_evaluate( val_df)
+        return  self.model_e.evaluate( val_df)
 
 
 
