@@ -135,10 +135,14 @@ if __name__ == "__main__":
 
 
     logger.info ("building model ")
-    model_squad_inst = model_squad ("model_9/weights_anonimized")
-    model_swag_inst = model_swag ("model_9/weights")
+    model_squad_inst1 = model_squad ("model_9/weights_a1")
+    model_squad_inst2 = model_squad ("model_9/weights_a2")
+    model_squad_inst3 = model_squad ("model_9/weights_a3")
+    model_squad_inst4 = model_squad ("model_9/weights_a4")
+    #model_squad_inst = model_squad ("model_9/weights")
+    #model_swag_inst = model_swag ("model_9/weights")
 
-    modelli = [model_squad_inst,model_swag_inst]
+    modelli = [model_squad_inst1,model_squad_inst2,model_squad_inst3,model_squad_inst4]
 
 
 

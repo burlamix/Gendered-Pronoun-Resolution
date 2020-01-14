@@ -15,6 +15,6 @@ hltproject/ensemble/model_9/weights
 #compiled stuff
 *.py[cod]
 *__pycache__
-
+*.mw
 #virtualenv stuff
 venv/
