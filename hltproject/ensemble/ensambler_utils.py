@@ -90,7 +90,7 @@ class model_e(model):
     def train(self,train_set, validation_set):
 
         for modello in self.modelli:
-            modello.train( train_set, validation_set )
+            modello.train( train_set, vallidation_set )
 
     def evaluate(self,dataset,combination="mean"):
 
@@ -117,74 +117,3 @@ class model_e(model):
             return np.asarray(min_entropy(risultati))
 
         return np.mean(risultati, axis=0)
-        
-
-if __name__ == "__main__":
-
-
-    test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
-    dev_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-development.tsv"
-    val_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-validation.tsv"
-    '''
-    #per trainare e testare piu velocemente, sono solo 5 esempi
-    test_path = "../datasets/gap-light.tsv"
-    dev_path = "../datasets/gap-light.tsv"
-    val_path = "../datasets/gap-light.tsv"
-    '''
-    test_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
-
-
-    logger.info ("building model ")
-    model_squad_inst1 = model_squad ("model_9/weights_a1")
-    model_squad_inst2 = model_squad ("model_9/weights_a2")
-    model_squad_inst3 = model_squad ("model_9/weights_a3")
-    model_squad_inst4 = model_squad ("model_9/weights_a4")
-    #model_squad_inst = model_squad ("model_9/weights")
-    #model_swag_inst = model_swag ("model_9/weights")
-
-    modelli = [model_squad_inst4]#,model_squad_inst2,model_squad_inst3,model_squad_inst4]
-
-
-
-    logger.info ("building model ")
-    model_e_inst = model_e(modelli)
-
-
-
-    logger.info ("evaluating model ")
-    res = model_e_inst.evaluate(test_examples_df,combination="mean")
-
-
-
-
-
-    test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
-    test_df_prod = test_df_prod.copy()
-    test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
-
-
-    #val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-
-
-    #val_probas_df_e.to_csv('stage1_ee_my_pred.csv', index=False)
-
-
-    test_path = "../datasets/gap-test.tsv"
-
-    #print("loss ensambled ")
-    #print(compute_loss("stage1_ee_my_pred.csv",test_path))
-
-
-    #print("loss squad")
-    #print(compute_loss("stage1_swag_only_my_w.csv",test_path))
-
-    #print("loss swag")
-    #print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
-
-
-
-    #for fast testing
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss  ")
-    print(compute_loss("elim.csv",test_path))
