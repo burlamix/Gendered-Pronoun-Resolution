@@ -142,7 +142,7 @@ if __name__ == "__main__":
     #model_squad_inst = model_squad ("model_9/weights")
     #model_swag_inst = model_swag ("model_9/weights")
 
-    modelli = [model_squad_inst1,model_squad_inst2,model_squad_inst3,model_squad_inst4]
+    modelli = [model_squad_inst1]#,model_squad_inst2,model_squad_inst3,model_squad_inst4]
 
 
 
