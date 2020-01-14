@@ -122,13 +122,13 @@ if __name__ == "__main__":
     model_e_inst = model_9e("model_9/weights_9e")
 
 
-    logger.info ("training model ")
-    model_e_inst.train(dev_path,val_path)
+    #logger.info ("training model ")
+    #model_e_inst.train(dev_path,val_path)
 
 
     logger.info ("evaluating model ")
     test_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
-    res = model_e_inst.evaluate(test_examples_df,combination="mean")
+    res = model_e_inst.evaluate(test_examples_df)
 
 
 
