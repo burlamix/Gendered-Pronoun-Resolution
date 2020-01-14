@@ -1,4 +1,3 @@
-
 import logging
 import os
 import pandas as pd
@@ -112,75 +111,40 @@ if __name__ == "__main__":
 
 
     #per trainare e testare piu velocemente, sono solo 5 esempi
-    dev_path = "../ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
-    val_path  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
-    test_path = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
 
-    zxzx = "../datasets/gap-light.tsv"
+    dev_path1  = "../ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
+    val_path1  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
+
+    dev_path2  = "../ensemble/model_7_submissions/input/gap-development_Elizabeth_Mary_James_Henry.tsv"
+    val_path2  = "../ensemble/model_7_submissions/input/gap-validation_Elizabeth_Mary_James_Henry.tsv"
+
+    dev_path3  = "../ensemble/model_7_submissions/input/gap-development_Kate_Elizabeth_Michael_James.tsv"
+    val_path3  = "../ensemble/model_7_submissions/input/gap-validation_Kate_Elizabeth_Michael_James.tsv"
+
+    dev_path4  = "../ensemble/model_7_submissions/input/gap-development_Mary_Alice_Henry_John.tsv"
+    val_path4  = "../ensemble/model_7_submissions/input/gap-validation_Mary_Alice_Henry_John.tsv"
+
+
 
 
 
     ### da qui test val e dev path sono corretti come tu pensi che siano utilizzati
 
 
-    val_examples_df = pd.read_csv(test_path, delimiter="\t")
-    test_df_prod = pd.read_csv(test_path, delimiter="\t")
-    test_df_prod = test_df_prod.copy()
-    test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
-
 
 
     logger.info ("building model ")
-    model_squad_inst = model_squad ("model_9/weights_anonimized")
-    #model_swag_inst = model_swag ("model_9/weights")
-    #model_SpanExtractor_inst = model_SpanExtractor ("model_9/weights")
+    model_squad_inst = model_squad ("model_9/weights_a1")
+    model_squad_inst = model_squad ("model_9/weights_a2")
+    model_squad_inst = model_squad ("model_9/weights_a3")
+    model_squad_inst = model_squad ("model_9/weights_a4")
+
+
 
 
 
     logger.info ("training model ")
-    model_squad_inst.train(dev_path,val_path)
-    #model_SpanExtractor_inst.train(dev_path,val_path)
-
-
-    logger.info ("evaluating ")
-    val_probas_no_i_squad = model_squad_inst.evaluate( val_examples_df )
-    #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
-    #val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path ) #questo prende un path gli altri prendono un pd
-
-    print(val_probas_no_i_squad)
-
-    #exit()
-    val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #val_probas_df_SpanExtractor= pd.DataFrame([test_df_prod.ID, val_probas_no_i_SpanExtractor[:,0], val_probas_no_i_SpanExtractor[:,1], val_probas_no_i_SpanExtractor[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-
-    val_probas_df_squad.to_csv('stage1_swag_only_my_w12.csv', index=False)
-    #val_probas_df_swag.to_csv('stage1_swag_only_my_QA_w.csv', index=False)
-    #val_probas_df_SpanExtractor.to_csv('stage1_swag_only_my_SEQ_w.csv', index=False)
-
-
-    #val_path = "../datasets/gap-test.tsv"
-
-
-    print("loss squad")
-    print(compute_loss("stage1_swag_only_my_w.csv",test_path))
-
-    #print("loss swag")
-    #print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
-
-    print("SEQ squad")
-    #print(compute_loss("stage1_swag_only_my_SEQ_w.csv",test_path))
-
-    #for i in range(len(y_test)):
-    #    y_one_hot[i, y_test[i]] = 1
-    #log_loss(y_one_hot, pred)
-
-
-    #submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #submission_df.to_csv('stage2_swag_only.csv', index=False)
-
-
-
-'''
-
-'''
+    model_squad_inst.train(dev_path1,val_path1)
+    model_squad_inst.train(dev_path2,val_path2)
+    model_squad_inst.train(dev_path3,val_path3)
+    model_squad_inst.train(dev_path4,val_path4)
