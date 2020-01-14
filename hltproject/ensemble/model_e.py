@@ -96,7 +96,7 @@ class model_e(model):
 
         risultati = []
 
-        for modello in modelli:
+        for modello in self.modelli:
             print("-")
             risultati.append(modello.evaluate(dataset))
 
