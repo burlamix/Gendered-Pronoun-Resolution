@@ -136,7 +136,7 @@ if __name__ == "__main__":
     model_e_inst = model_e([model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
 
 
-    res = model_e_inst.evaluate([test_examples_df1,test_examples_df2,test_examples_df3,test_examples_df4],combination="mean")
+    res = model_e_inst.evaluate_list([test_examples_df1,test_examples_df2,test_examples_df3,test_examples_df4],combination="mean")
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss ensambled mean")
