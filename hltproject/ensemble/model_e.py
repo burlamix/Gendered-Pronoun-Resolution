@@ -118,7 +118,7 @@ class model_e(model):
 
         return np.mean(risultati, axis=0)
         
-    def evaluate_list(self,dataset,combination="mean"):
+    def evaluate_list(self,datasets,combination="mean"):
 
         risultati = []
 
