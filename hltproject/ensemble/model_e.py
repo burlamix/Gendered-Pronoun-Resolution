@@ -118,7 +118,32 @@ class model_e(model):
 
         return np.mean(risultati, axis=0)
         
+    def evaluate_list(self,dataset,combination="mean"):
 
+        risultati = []
+
+        for modello,lista_i in zip(self.modelli,datasets):
+            print("-")
+            risultati.append(modello.evaluate(lista_i))
+
+        #with open('array_evalutation.pkl', 'rb') as f:
+         #   risultati = pickle.load(f)
+
+        
+        if combination == "mean":
+            return np.mean(risultati, axis=0)
+
+        elif combination == "max":
+            return np.asarray(max_voting(risultati))
+
+        elif combination == "min":
+            return np.asarray(min_voting(risultati))
+
+        elif combination == "min_entropy":
+            return np.asarray(min_entropy(risultati))
+
+        return np.mean(risultati, axis=0)
+        
 if __name__ == "__main__":
 
 
