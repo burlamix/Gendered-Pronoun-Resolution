@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
     #test_path = "https://raw.githubusercontent.com/google-research-datasets/gap-coreference/master/gap-test.tsv"
     test_path = "../datasets/gap-test.tsv"
+    val_path4  = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael"
 
 
     test_examples_df = pd.read_csv(test_path, delimiter="\t")
@@ -132,21 +133,4 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-    res = model_e_inst.evaluate(test_examples_df,combination="min_entropy")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled min_entropy")
-    print(compute_loss("elim.csv",test_path))
 
-    res = model_e_inst.evaluate(test_examples_df,combination="max")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled max")
-    print(compute_loss("elim.csv",test_path))
-
-
-    res = model_e_inst.evaluate(test_examples_df,combination="min")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled min")
-    print(compute_loss("elim.csv",test_path))
