@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
 
 
-'''
+    '''
     logger.info ("building model ")
     model_9_inst1 = model_9e("model_9/weights_a1")
     model_9_inst2 = model_9e("model_9/weights_a2")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     model_9_inst2.train(dev_path2,val_path2)
     model_9_inst3.train(dev_path3,val_path3)
     model_9_inst4.train(dev_path4,val_path4)
-'''
+    '''
 
     model_e_inst = model_e([model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
 
