@@ -15,4 +15,7 @@ loggers:
   model_7: 
     level: DEBUG
     handlers: [console]
+  model_e: 
+    level: DEBUG
+    handlers: [console]
   
