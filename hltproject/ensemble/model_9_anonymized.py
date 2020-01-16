@@ -69,17 +69,17 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-test.tsv"
 
 
-    val_path4  = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
-    test_examples_df1 = pd.read_csv(test_path, delimiter="\t")
+    test_path1  = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
+    test_examples_df1 = pd.read_csv(test_path1, delimiter="\t")
 
-    val_path4  = "../ensemble/model_7_submissions/input/gap-test_Elizabeth_Mary_James_Henry.tsv"
-    test_examples_df2 = pd.read_csv(test_path, delimiter="\t")
+    test_path2  = "../ensemble/model_7_submissions/input/gap-test_Elizabeth_Mary_James_Henry.tsv"
+    test_examples_df2 = pd.read_csv(test_path2, delimiter="\t")
 
-    val_path4  = "../ensemble/model_7_submissions/input/gap-test_Kate_Elizabeth_Michael_James.tsv"
-    test_examples_df3 = pd.read_csv(test_path, delimiter="\t")
+    test_path3  = "../ensemble/model_7_submissions/input/gap-test_Kate_Elizabeth_Michael_James.tsv"
+    test_examples_df3 = pd.read_csv(test_path3, delimiter="\t")
 
-    val_path4  = "../ensemble/model_7_submissions/input/gap-test_Mary_Alice_Henry_John.tsv"
-    test_examples_df4 = pd.read_csv(test_path, delimiter="\t")
+    test_path4  = "../ensemble/model_7_submissions/input/gap-test_Mary_Alice_Henry_John.tsv"
+    test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
 
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
