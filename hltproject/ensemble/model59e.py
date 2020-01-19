@@ -140,7 +140,7 @@ if __name__ == "__main__":
     '''
     model_e_inst = model_e([model5_instance,model_9_inst1])
 
-    res = model_9_inst4.evaluate(test_examples_df1)
+    res = model_e_inst.evaluate(test_examples_df1)
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 4 ")
