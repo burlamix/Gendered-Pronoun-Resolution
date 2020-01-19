@@ -5,6 +5,9 @@ import numpy as np
 
 from model_9e import model_9e
 from model_e import model_e
+from model5 import Model5
+
+
 from model_9.utils import BertSwagRunner
 from model_9.utils import SquadRunner
 from model_9.utils import BERTSpanExtractor
@@ -43,9 +46,9 @@ if __name__ == "__main__":
     test_path = "..ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
 
 
-    test_path = "../datasets/gap-validation.tsv"
-    dev_path = "../datasets/gap-test.tsv"
-    val_path = "../datasets/gap-development.tsv"
+    c_test_path = "../datasets/gap-validation.tsv"
+    c_dev_path = "../datasets/gap-test.tsv"
+    c_val_path = "../datasets/gap-development.tsv"
     zxzx = "../datasets/gap-light.tsv"
     '''
 
@@ -73,13 +76,13 @@ if __name__ == "__main__":
     test_examples_df1 = pd.read_csv(test_path1, delimiter="\t")
 
     test_path2  = "../ensemble/model_7_submissions/input/gap-test_Elizabeth_Mary_James_Henry.tsv"
-    test_examples_df2 = pd.read_csv(test_path2, delimiter="\t")
+    #test_examples_df2 = pd.read_csv(test_path2, delimiter="\t")
 
     test_path3  = "../ensemble/model_7_submissions/input/gap-test_Kate_Elizabeth_Michael_James.tsv"
-    test_examples_df3 = pd.read_csv(test_path3, delimiter="\t")
+    #test_examples_df3 = pd.read_csv(test_path3, delimiter="\t")
 
     test_path4  = "../ensemble/model_7_submissions/input/gap-test_Mary_Alice_Henry_John.tsv"
-    test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
+    #test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
 
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
@@ -91,10 +94,12 @@ if __name__ == "__main__":
 
     
     logger.info ("building model ")
+    model5_instance = Model5()
     model_9_inst1 = model_9e("model_9/weights_a1")
-    model_9_inst2 = model_9e("model_9/weights_a2")
-    model_9_inst3 = model_9e("model_9/weights_a3")
-    model_9_inst4 = model_9e("model_9/weights_a4")
+
+    #model_9_inst2 = model_9e("model_9/weights_a2")
+    #model_9_inst3 = model_9e("model_9/weights_a3")
+    #model_9_inst4 = model_9e("model_9/weights_a4")
 
     '''
     logger.info ("training model ")
@@ -133,13 +138,21 @@ if __name__ == "__main__":
     print(compute_loss("elim.csv",test_path))
     
     '''
-    model_e_inst = model_e([model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
+    model_e_inst = model_e([model5_instance,model_9_inst1])
+
+    res = model_9_inst4.evaluate(test_examples_df1)
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss 4 ")
+    print(compute_loss("elim.csv",test_path))
 
 
+
+    '''
     res = model_e_inst.evaluate_list([test_path1,test_path2,test_path3,test_path4],combination="mean")
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-
+    '''

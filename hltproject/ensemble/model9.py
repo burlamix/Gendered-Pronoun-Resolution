@@ -14,7 +14,6 @@ from sklearn.metrics import log_loss
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-print(dir_path)
 
 
 from hltproject.score.score import compute_loss_df
@@ -36,8 +35,6 @@ class model_b(model):
         None
 
     def train(self, train_set, vallidation_set ):
-
-        print("!")
         self.runner.train( train_set, vallidation_set, self.weight_path, n_splits=4)
 
 
@@ -67,7 +64,6 @@ class model_swag(model_b):
         self.runner = BertSwagRunner(None, None, None, num_train_epochs=1, bert_model='bert-large-uncased')
         self.weight_path = weight_path
         self.classes_ = [3]
-
 
 
 class model_squad(model_b):
@@ -107,7 +103,6 @@ if __name__ == "__main__":
     test_path = "../datasets/gap-validation.tsv"
     dev_path = "../datasets/gap-test.tsv"
     val_path = "../datasets/gap-development.tsv"
-    zxzx = "../datasets/gap-light.tsv"
     '''
 
 
@@ -116,11 +111,6 @@ if __name__ == "__main__":
     val_path  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
     test_path = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
 
-    zxzx = "../datasets/gap-light.tsv"
-
-
-
-    ### da qui test val e dev path sono corretti come tu pensi che siano utilizzati
 
 
     val_examples_df = pd.read_csv(test_path, delimiter="\t")
@@ -147,9 +137,6 @@ if __name__ == "__main__":
     #val_probas_no_i_swag = model_swag_inst.evaluate( val_examples_df )
     #val_probas_no_i_SpanExtractor = model_SpanExtractor_inst.evaluate( test_path ) #questo prende un path gli altri prendono un pd
 
-    print(val_probas_no_i_squad)
-
-    #exit()
     val_probas_df_squad= pd.DataFrame([test_df_prod.ID, val_probas_no_i_squad[:,0], val_probas_no_i_squad[:,1], val_probas_no_i_squad[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     #val_probas_df_swag= pd.DataFrame([test_df_prod.ID, val_probas_no_i_swag[:,0], val_probas_no_i_swag[:,1], val_probas_no_i_swag[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     #val_probas_df_SpanExtractor= pd.DataFrame([test_df_prod.ID, val_probas_no_i_SpanExtractor[:,0], val_probas_no_i_SpanExtractor[:,1], val_probas_no_i_SpanExtractor[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
@@ -168,19 +155,6 @@ if __name__ == "__main__":
     #print("loss swag")
     #print(compute_loss("stage1_swag_only_my_QA_w.csv",test_path))
 
-    print("SEQ squad")
+    #print("SEQ squad")
     #print(compute_loss("stage1_swag_only_my_SEQ_w.csv",test_path))
 
-    #for i in range(len(y_test)):
-    #    y_one_hot[i, y_test[i]] = 1
-    #log_loss(y_one_hot, pred)
-
-
-    #submission_df = pd.DataFrame([test_df_prod.ID, val_probas[:,0], val_probas[:,1], val_probas[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #submission_df.to_csv('stage2_swag_only.csv', index=False)
-
-
-
-'''
-
-'''
