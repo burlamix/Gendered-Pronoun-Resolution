@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     
     logger.info ("building model ")
-    model5_instance = Model5()
+    #model5_instance = Model5()
     model_9_inst1 = model_9e("model_9/weights_a1")
 
 
@@ -109,22 +109,22 @@ if __name__ == "__main__":
 
     logger.info ("evaluating model ")
 
-    #res =     model_9_inst1.evaluate ( light_test )
-    #val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    #val_probas_df_e.to_csv('elim.csv', index=False)
-    #print("loss 1 ")
-    #print(compute_loss("elim.csv",light_test))
+    res =     model_9_inst1.evaluate ( light_test )
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss 1 ")
+    print(compute_loss("elim.csv",light_test))
 
 
 
     
 
-    res =  model5_instance.evaluate (light_test )
-    print(res)
-    val_probas_df_e= pd.DataFrame([ res[:,0], res[:,1], res[:,2] ,res[:,3]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss 2 ")
-    print(compute_loss("elim.csv",light_test))
+    #res =  model5_instance.evaluate (light_test )
+    #print(res)
+    #val_probas_df_e= pd.DataFrame([ res[:,0], res[:,1], res[:,2] ,res[:,3]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    #val_probas_df_e.to_csv('elim.csv', index=False)
+    #print("loss 2 ")
+    #print(compute_loss("elim.csv",light_test))
 
 
 
