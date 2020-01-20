@@ -127,13 +127,13 @@ if __name__ == "__main__":
 
 
 
-'''
+    '''
     logger.info ("training model ")
     model_9_inst1.train(dev_path1,val_path1)
     model_9_inst2.train(dev_path2,val_path2)
     model_9_inst3.train(dev_path3,val_path3)
     model_9_inst4.train(dev_path4,val_path4)
-    
+
     res = model_9_inst3.evaluate(test_examples_df3)
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 4 ")
     print(compute_loss("elim.csv",test_path))
-    
+
     '''
     #############################
     #model_e_inst = model_e([model5_instance,model_9_inst1])
