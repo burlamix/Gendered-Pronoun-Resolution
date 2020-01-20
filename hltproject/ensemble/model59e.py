@@ -124,6 +124,8 @@ if __name__ == "__main__":
 
     res =  model5_instance.evaluate (light_test )
 
+    print(res)
+
     val_probas_df_e= pd.DataFrame([ res[:,0], res[:,1], res[:,2] ,res[:,3]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 2 ")
