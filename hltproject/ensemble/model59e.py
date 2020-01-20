@@ -90,7 +90,6 @@ if __name__ == "__main__":
     ### da qui test val e dev path sono corretti come tu pensi che siano utilizzati
 
 
-    print(test_df_prod      )
     
     logger.info ("building model ")
     model5_instance = Model5()
@@ -116,7 +115,6 @@ if __name__ == "__main__":
 
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    print(val_probas_df_e)
 
     val_probas_df_e.to_csv('elim.csv', index=False)
 
@@ -125,9 +123,8 @@ if __name__ == "__main__":
     print(compute_loss("elim.csv",light_test))
 
     res =  model5_instance.evaluate (light_test )
-    print(res)
-    
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+
+    val_probas_df_e= pd.DataFrame([ res[:,0], res[:,1], res[:,2] ,res[:,3]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 2 ")
     print(compute_loss("elim.csv",light_test))
