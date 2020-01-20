@@ -49,7 +49,7 @@ if __name__ == "__main__":
     c_test_path = "../datasets/gap-validation.tsv"
     c_dev_path = "../datasets/gap-test.tsv"
     c_val_path = "../datasets/gap-development.tsv"
-    '''
+    
 
 
 
@@ -81,6 +81,7 @@ if __name__ == "__main__":
     val_path = "../datasets/gap-validation.tsv"
     test_path = "../datasets/gap-test.tsv"
     dev_path = "../datasets/gap-development.tsv"
+    '''
     light_test = "../datasets/gap-light.tsv"
 
     test_df_prod = pd.read_csv(light_test, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
@@ -110,6 +111,9 @@ if __name__ == "__main__":
     logger.info ("evaluating model ")
 
     res =     model_9_inst1.evaluate ( light_test )
+
+    print(res)
+
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
