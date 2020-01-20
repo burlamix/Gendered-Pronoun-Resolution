@@ -96,12 +96,31 @@ if __name__ == "__main__":
     model_9_inst1 = model_9e("model_9/weights_a1")
 
 
-    model_9_inst1.evaluate ( test_path )
-    model5_instance.evaluate (test_path )
+   
 
     #model_9_inst2 = model_9e("model_9/weights_a2")
     #model_9_inst3 = model_9e("model_9/weights_a3")
     #model_9_inst4 = model_9e("model_9/weights_a4")
+
+
+
+
+
+
+    logger.info ("evaluating model ")
+
+    res =     model_9_inst1.evaluate ( test_path )
+
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss 1 ")
+    print(compute_loss("elim.csv",test_path))
+
+    res =  model5_instance.evaluate (test_path )
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss 2 ")
+    print(compute_loss("elim.csv",test_path))
 
     '''
     logger.info ("training model ")
@@ -110,23 +129,6 @@ if __name__ == "__main__":
     model_9_inst3.train(dev_path3,val_path3)
     model_9_inst4.train(dev_path4,val_path4)
     
-
-
-
-    logger.info ("evaluating model ")
-
-    res = model_9_inst1.evaluate(test_examples_df1)
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss 1 ")
-    print(compute_loss("elim.csv",test_path))
-
-    res = model_9_inst2.evaluate(test_examples_df2)
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss 2 ")
-    print(compute_loss("elim.csv",test_path))
-
     res = model_9_inst3.evaluate(test_examples_df3)
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
