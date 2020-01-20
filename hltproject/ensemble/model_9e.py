@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     logger.info ("evaluating model ")
     test_examples_df = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(test_path, delimiter="\t")
-    res = model_e_inst.evaluate(test_examples_df)
+    res = model_e_inst.evaluate(test_path)
 
 
 
