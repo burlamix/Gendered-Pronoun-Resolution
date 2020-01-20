@@ -109,18 +109,18 @@ if __name__ == "__main__":
 
     logger.info ("evaluating model ")
 
-    res =     model_9_inst1.evaluate ( light_test )
+    res =     model_9_inst1.evaluate ( val_path )
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 1 ")
-    print(compute_loss("elim.csv",light_test))
+    print(compute_loss("elim.csv",val_path))
 
-    res =  model5_instance.evaluate (light_test )
+    res =  model5_instance.evaluate (val_path )
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 2 ")
-    print(compute_loss("elim.csv",light_test))
+    print(compute_loss("elim.csv",val_path))
 
     '''
     logger.info ("training model ")
@@ -144,11 +144,11 @@ if __name__ == "__main__":
     '''
     model_e_inst = model_e([model5_instance,model_9_inst1])
 
-    res = model_e_inst.evaluate(light_test)
+    res = model_e_inst.evaluate(val_path)
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 4 ")
-    print(compute_loss("elim.csv",light_test))
+    print(compute_loss("elim.csv",val_path))
 
 
 
