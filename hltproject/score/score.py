@@ -48,7 +48,7 @@ def compute_loss_df ( val_probas_df, input_fname ):
         print ("loss\t{}".format(loss))
             
 
-def compute_loss ( model_fname, input_fname, print=True ):
+def compute_loss ( model_fname, input_fname, print_p=True ):
     
     gold_classes = {}
     with open ( model_fname ) as model_fin, open ( input_fname ) as input_fin:
@@ -68,7 +68,7 @@ def compute_loss ( model_fname, input_fname, print=True ):
         
         loss = -logssum / N
         
-        if print:
+        if print_p:
             logger.info ("loss\t{}".format(loss))
             print ("loss\t{}".format(loss))
     
