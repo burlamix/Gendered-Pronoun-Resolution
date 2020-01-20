@@ -133,7 +133,7 @@ if __name__ == "__main__":
     res = model_e_inst.evaluate(test_path)
 
 
-
+    print(res)
 
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
