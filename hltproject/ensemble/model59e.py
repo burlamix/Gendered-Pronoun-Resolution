@@ -92,8 +92,8 @@ if __name__ == "__main__":
 
     
     logger.info ("building model ")
-    #model5_instance = Model5()
-    model_9_inst1 = model_9e("model_9/weights_a1")
+    model5_instance = Model5()
+    #model_9_inst1 = model_9e("model_9/weights_a1")
 
 
    
