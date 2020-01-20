@@ -150,8 +150,7 @@ class model_e(model):
 
         risultati = []
         
-        for modello,test_set_fname,model_name in zip(self.modelli,datasets_fnames, self.
-            ):
+        for modello,test_set_fname,model_name in zip(self.modelli,datasets_fnames, self.model_names):
             logger.info ("evaluating {}".format(model_name))
 
             test_set = pd.read_csv(test_set_fname, delimiter="\t")
