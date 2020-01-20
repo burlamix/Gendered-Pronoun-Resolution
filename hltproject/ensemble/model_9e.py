@@ -103,8 +103,10 @@ class model_9e(object):
 
 
     def evaluate(self, val_df ):
+        
+        val_df_df = pd.read_csv(val_df, delimiter="\t")
 
-        return  self.model_e.evaluate( val_df)
+        return  self.model_e.evaluate( val_df_df )
 
 
 
