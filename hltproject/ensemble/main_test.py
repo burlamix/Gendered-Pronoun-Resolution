@@ -167,21 +167,21 @@ if __name__ == "__main__":
     print("loss 4 ")
     print(compute_loss("elim.csv",test_path))
 '''
-    istance_name = ["model_9_inst0","model5_instance"]
-    istance_obj  = [model_9_inst0,model5_instance]
-    model_95 = model_e(istance_obj, istance_name)
+    istance_name1= ["model_9_inst0","model5_instance"]
+    istance_obj1  = [model_9_inst0,model5_instance]
+    model_95 = model_e(istance_obj1, istance_name1)
 
-    istance_name =["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4"]
-    istance_obj  = [model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4]
-    model_9_all = model_e(istance_obj, istance_name)
+    istance_name2 =["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4"]
+    istance_obj2  = [model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4]
+    model_9_all = model_e(istance_obj2, istance_name2)
 
-    istance_name =["model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
-    istance_obj  =[model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4]
-    model_5_all = model_e(istance_obj, istance_name)
+    istance_name3 =["model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
+    istance_obj3  =[model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4]
+    model_5_all = model_e(istance_obj3, istance_name3)
 
-    istance_name = ["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4","model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
-    istance_obj  = [model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4]
-    model_95_all = model_e(istance_obj, istance_name)
+    istance_name4 = ["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4","model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
+    istance_obj4  = [model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4]
+    model_95_all = model_e(istance_obj4, istance_name4)
 
 
 
@@ -189,9 +189,9 @@ if __name__ == "__main__":
 
     logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
 
-    res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
-    res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
-    res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
+    #res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
+    #res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
+    #res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
 
 
     
