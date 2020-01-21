@@ -50,12 +50,12 @@ flags.DEFINE_string("dev_data_path", 'data/development.tsv',
 flags.DEFINE_string("test_data_path", 'data/test.tsv',
     "Test.tsv data file")
 
-flags.DEFINE_string("bert_config_file", 'BERT/uncased_L-24_H-1024_A-16/bert_config.json',
+flags.DEFINE_string("bert_config_file", 'model_5/bert/uncased_L-24_H-1024_A-16/bert_config.json',
     "The config json file corresponding to the pre-trained BERT model.")
 
 flags.DEFINE_string("task_name", "GAP", "The name of the task to train.")
 
-flags.DEFINE_string("vocab_file", 'BERT/uncased_L-24_H-1024_A-16/vocab.txt',
+flags.DEFINE_string("vocab_file", 'model_5/bert/uncased_L-24_H-1024_A-16/vocab.txt',
     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string("output_dir", "output",
@@ -64,7 +64,7 @@ flags.DEFINE_string("output_dir", "output",
 flags.DEFINE_string("output_file", "output.tsv",
     "The output file to write")
 
-flags.DEFINE_string("init_checkpoint", 'BERT/uncased_L-24_H-1024_A-16/bert_model.ckpt',
+flags.DEFINE_string("init_checkpoint", 'model_5/bert/uncased_L-24_H-1024_A-16/bert_model.ckpt',
     "Initial checkpoint (usually from a pre-trained BERT model).")
 
 flags.DEFINE_bool("do_lower_case", True, "True for uncased BERT models")
@@ -187,19 +187,19 @@ class GAProcessor(DataProcessor):
   """Processor for the GAP data set."""
 
   def get_train_examples(self, train_data_path):
-    tf.logging.info(path)
+    tf.logging.info(FLAGS.train_data_path)
     return self._create_examples(
-        self._read_tsv(train_data_path), "train")
+        self._read_tsv(FLAGS.train_data_path), "train")
         # self._read_tsv(path), "train") TODO CHECK
 
   def get_dev_examples(self, data_dir):
     return self._create_examples(
-        self._read_tsv(dev_data_path), "dev")
+        self._read_tsv(FLAGS.dev_data_path), "dev")
         # self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev") TODO CHECK
 
   def get_test_examples(self, data_dir):
     return self._create_examples(
-        self._read_tsv(test_data_path), "test")
+        self._read_tsv(FLAGS.test_data_path), "test")
         # self._read_tsv(os.path.join(data_dir, "test.tsv")), "test") TODO CHECK
 
   def get_labels(self):
@@ -702,10 +702,10 @@ def main(_):
   if FLAGS.pre_train:
     tsv_dir = os.path.join(FLAGS.data_dir, "trainQ")
     tf.gfile.MakeDirs(record_dir)
-    in_file = train_data_path
+    in_file = FLAGS.train_data_path
     if "/" in in_file:
       in_file = in_file[in_file.rfind("/")+1:]
-    train_examples = processor.get_train_examples(train_data_path)
+    train_examples = processor.get_train_examples(FLAGS.train_data_path)
     train_file = in_file + '.tf_record'
     train_path = os.path.join(record_dir, train_file)
     file_based_convert_examples_to_features(
@@ -842,5 +842,4 @@ def main(_):
 #                                                                              #
 ################################################################################
 if __name__ == "__main__":
-  flags.mark_flag_as_required("output_dir")
   tf.app.run()
