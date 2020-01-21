@@ -100,7 +100,7 @@ if __name__ == "__main__":
     model5_instance.train ( dev_path4, val_path4, "model_5_a4_f")
     '''
 
-    res = model5_instance.evaluate(light_path,  "model_5_c_f")
+    res = model5_instance.evaluate(light_path)
 
     print(res)
 
