@@ -65,7 +65,7 @@ if __name__ == "__main__":
     test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
 
 
-    test_df_prod = pd.read_csv(light_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
+    test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
     test_df_prod = test_df_prod[['ID', 'Text', 'Pronoun', 'Pronoun-offset', 'A', 'A-offset', 'B', 'B-offset', 'URL']]
     ### da qui test val e dev path sono corretti come tu pensi che siano utilizzati
