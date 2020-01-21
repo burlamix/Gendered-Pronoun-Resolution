@@ -54,7 +54,7 @@ if __name__ == "__main__":
     val_path   = "../datasets/gap-validation.tsv"
     test_path  = "../datasets/gap-test.tsv"
     dev_path   = "../datasets/gap-development.tsv"
-    light_path = "../datasets/gap-light.tsv"
+    test_path = "../datasets/gap-light.tsv"
 
 
 
