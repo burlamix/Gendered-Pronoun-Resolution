@@ -11,11 +11,10 @@ logger = logging.getLogger ( __name__ )
 
 class Model5(model):
 
-    def __init__(self):
-        self.train_set, self.dev_set = '', ''
- 
+    def __init__(self, weight_folder_path):
+        self.weight_folder_path = weight_folder_path 
         
-    def train(self, train_set, dev_set, weight_folder_path):
+    def train(self, dev_set, val_set):
         bert_large_url = "https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip"
         
         if os.path.isdir('model_5/BERT/uncased_L-24_H-1024_A-16') == False:
@@ -31,7 +30,7 @@ class Model5(model):
             'model_5/gap_ken_gap_classifier.py',
             '--pre_train',
             '--use_tpu=false',
-            '--train_data_path=' + train_set
+            '--train_data_path=' + dev_set
             ],stdout=sys.stdout, stderr=sys.stderr).communicate()
         
         # python3 gap_ken_gap_classifier.py --do_train --use_tpu=false
@@ -41,7 +40,7 @@ class Model5(model):
             'model_5/gap_ken_gap_classifier.py',
             '--do_train',
             '--use_tpu=false',
-            '--train_data_path=' + train_set
+            '--train_data_path=' + dev_set
             ],stdout=sys.stdout, stderr=sys.stderr).communicate()
  
         # python3 gap_ken_gap_classifier.py --do_eval --use_tpu=false  
@@ -52,10 +51,10 @@ class Model5(model):
             'model_5/gap_ken_gap_classifier.py',
             '--do_eval',
             '--use_tpu=false',
-            '--dev_data_path=' + dev_set
+            '--dev_data_path=' + val_set
             ],stdout=sys.stdout, stderr=sys.stderr).communicate()
 
-    def evaluate(self, val_set, weight_folder_path="model_5_weights"):
+    def evaluate(self, test_set):
 
         # python3 gap_ken_gap_classifier.py --do_predict --use_tpu=false
 
@@ -65,7 +64,7 @@ class Model5(model):
             'model_5/gap_ken_gap_classifier.py',
             '--do_predict',
             '--use_tpu=false',
-            '--test_data_path=' + val_set,
+            '--test_data_path=' + test_set,
             '--output_dir=model_5/output/',
             '--output_file=output.csv'
             ],stdout=sys.stdout, stderr=sys.stderr).communicate()
@@ -75,17 +74,11 @@ class Model5(model):
             
 #RUN the model
 if __name__ == "__main__":
-    #TESTS with light dataset
-    # test_path = "../datasets/gap-light.tsv"
-    # dev_path = "../datasets/gap-light.tsv"
-    # val_path = "../datasets/gap-light.tsv"
-
-    test_path = "../datasets/gap-test.tsv"
-    dev_path = "../datasets/gap-development.tsv"
-    val_path = "../datasets/gap-validation.tsv"
-
-    stage2_path = "../datasets/gap_validation_stage2.tsv"
     
-    model5_instance = Model5()
-    model5_instance.train ( test_path, dev_path, "model_7_weights")
-    # model7_instance.evaluate (stage2_path, "model_7_weights" )
+    dev_path = "../datasets/gap-light.tsv"
+    val_path = "../datasets/gap-light.tsv"
+    test_path = "../datasets/gap-light.tsv"
+    
+    model5_instance = Model5( "model_5_weights" )
+    model5_instance.train ( dev_path, val_path )
+    model7_instance.evaluate (test_path )
