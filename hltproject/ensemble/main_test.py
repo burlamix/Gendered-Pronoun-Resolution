@@ -169,6 +169,12 @@ if __name__ == "__main__":
 
     
     '''
+    model_95 = model_e([model_9_inst0,model5_instance])
+    model_9_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
+    model_5_all = model_e([model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
+    model_95_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
+
+
     logger.info ("  ------------------------------------ evaluating model 9+5  ------------------------------------")
 
     res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
@@ -189,13 +195,9 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-    
+
     logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
 
-    model_95 = model_e([model_9_inst0,model5_instance])
-    model_9_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
-    model_5_all = model_e([model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
-    model_95_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
 
 
     res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_9_all_min")
