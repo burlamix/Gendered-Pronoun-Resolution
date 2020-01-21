@@ -182,8 +182,7 @@ if __name__ == "__main__":
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
-
-    '''
+    
     res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
@@ -196,7 +195,7 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-
+    '''
     logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
 
 
