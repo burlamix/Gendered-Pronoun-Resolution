@@ -78,7 +78,7 @@ class Model5(model):
 
         result = pd.read_csv(self.weight_folder_path + "/output.csv", delimiter=",")
 
-        return result.values
+        return result.values[:,1:]
 
 # RUN the model
 if __name__ == "__main__":
