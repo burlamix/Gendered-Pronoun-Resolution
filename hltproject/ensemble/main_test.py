@@ -35,34 +35,34 @@ logger = logging.getLogger ( __name__ )
 if __name__ == "__main__":
 
 
-    dev_path1  = "../ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
-    val_path1  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
-    test_path1 = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
+    #dev_path1  = "../ensemble/model_7_submissions/input/gap-development_Alice_Kate_John_Michael.tsv"
+    #val_path1  = "../ensemble/model_7_submissions/input/gap-validation_Alice_Kate_John_Michael.tsv"
+    #test_path1 = "../ensemble/model_7_submissions/input/gap-test_Alice_Kate_John_Michael.tsv"
     
-    dev_path2  = "../ensemble/model_7_submissions/input/gap-development_Elizabeth_Mary_James_Henry.tsv"
-    val_path2  = "../ensemble/model_7_submissions/input/gap-validation_Elizabeth_Mary_James_Henry.tsv"
-    test_path2 = "../ensemble/model_7_submissions/input/gap-test_Elizabeth_Mary_James_Henry.tsv"
+    #dev_path2  = "../ensemble/model_7_submissions/input/gap-development_Elizabeth_Mary_James_Henry.tsv"
+    #val_path2  = "../ensemble/model_7_submissions/input/gap-validation_Elizabeth_Mary_James_Henry.tsv"
+    #test_path2 = "../ensemble/model_7_submissions/input/gap-test_Elizabeth_Mary_James_Henry.tsv"
     
-    test_path3 = "../ensemble/model_7_submissions/input/gap-test_Kate_Elizabeth_Michael_James.tsv"
-    dev_path3  = "../ensemble/model_7_submissions/input/gap-development_Kate_Elizabeth_Michael_James.tsv"
-    val_path3  = "../ensemble/model_7_submissions/input/gap-validation_Kate_Elizabeth_Michael_James.tsv"
+    #test_path3 = "../ensemble/model_7_submissions/input/gap-test_Kate_Elizabeth_Michael_James.tsv"
+    #dev_path3  = "../ensemble/model_7_submissions/input/gap-development_Kate_Elizabeth_Michael_James.tsv"
+    #val_path3  = "../ensemble/model_7_submissions/input/gap-validation_Kate_Elizabeth_Michael_James.tsv"
     
-    dev_path4  = "../ensemble/model_7_submissions/input/gap-development_Mary_Alice_Henry_John.tsv"
-    val_path4  = "../ensemble/model_7_submissions/input/gap-validation_Mary_Alice_Henry_John.tsv"
-    test_path4 = "../ensemble/model_7_submissions/input/gap-test_Mary_Alice_Henry_John.tsv"
+    #dev_path4  = "../ensemble/model_7_submissions/input/gap-development_Mary_Alice_Henry_John.tsv"
+    #val_path4  = "../ensemble/model_7_submissions/input/gap-validation_Mary_Alice_Henry_John.tsv"
+    #test_path4 = "../ensemble/model_7_submissions/input/gap-test_Mary_Alice_Henry_John.tsv"
 
-    val_path   = "../datasets/gap-validation.tsv"
-    test_path  = "../datasets/gap-test.tsv"
-    dev_path   = "../datasets/gap-development.tsv"
+    #val_path   = "../datasets/gap-validation.tsv"
+    #test_path  = "../datasets/gap-test.tsv"
+    #dev_path   = "../datasets/gap-development.tsv"
     test_path = "../datasets/gap-light.tsv"
 
 
 
-    test_examples_df = pd.read_csv(test_path, delimiter="\t")
-    test_examples_df1 = pd.read_csv(test_path1, delimiter="\t")
-    test_examples_df2 = pd.read_csv(test_path2, delimiter="\t")
-    test_examples_df3 = pd.read_csv(test_path3, delimiter="\t")
-    test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
+    #test_examples_df = pd.read_csv(test_path, delimiter="\t")
+    #test_examples_df1 = pd.read_csv(test_path1, delimiter="\t")
+    #test_examples_df2 = pd.read_csv(test_path2, delimiter="\t")
+    #test_examples_df3 = pd.read_csv(test_path3, delimiter="\t")
+    #test_examples_df4 = pd.read_csv(test_path4, delimiter="\t")
 
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")#pd.read_csv(dev_path, delimiter="\t")
@@ -170,9 +170,9 @@ if __name__ == "__main__":
     
     '''
     model_95 = model_e([model_9_inst0,model5_instance])
-    model_9_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
-    model_5_all = model_e([model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
-    model_95_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
+    #model_9_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4])
+    #model_5_all = model_e([model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
+    #model_95_all = model_e([model_9_inst0,model_9_inst1,model_9_inst2,model_9_inst3,model_9_inst4,model5_instance,model5_instance1,model5_instance2,model5_instance3,model5_instance4])
 
 
     logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
@@ -183,6 +183,7 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
+    '''
     res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
@@ -260,4 +261,4 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-   
+   '''
