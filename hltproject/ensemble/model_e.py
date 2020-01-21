@@ -156,6 +156,8 @@ class model_e(model):
             test_set = pd.read_csv(test_set_fname, delimiter="\t")
 
             res = np.asarray (modello.evaluate(test_set_fname))
+            print("\n\n\n")
+            print(res)
             risultati.append( res )
 
             if fout_report:
