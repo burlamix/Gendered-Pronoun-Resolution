@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     print(res)
 
-    print(res[:,:-1])
+    print(res[:,1:])
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
