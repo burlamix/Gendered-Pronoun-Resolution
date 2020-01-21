@@ -188,7 +188,7 @@ class model_e(model):
             val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = self._OUTPUT_FOLDER + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
-            loss = compute_loss(prediction_fname,test_path, effective_testFalse)
+            loss = compute_loss(prediction_fname,test_path, effective_test=False)
 
             logger.info ("loss for ensemble: {} - predictions written to {}".format (loss, prediction_fname))
             print ("{}\t{}".format("ensemble", loss), file=fout_report)
