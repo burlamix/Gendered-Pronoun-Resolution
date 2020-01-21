@@ -54,7 +54,7 @@ if __name__ == "__main__":
     val_path   = "../datasets/gap-validation.tsv"
     test_path  = "../datasets/gap-test.tsv"
     dev_path   = "../datasets/gap-development.tsv"
-    light_path = "../datasets/gap-light.tsv"
+    test_path = "../datasets/gap-light.tsv"
 
 
 
@@ -74,16 +74,16 @@ if __name__ == "__main__":
 
     
     logger.info ("building model ")
-    #model_9_inst0 = model_9e("model_9/weights_c_f")
-    #model_9_inst1 = model_9e("model_9/weights_a1_f")
-    ##model_9_inst2 = model_9e("model_9/weights_a2_f")
-    #model_9_inst3 = model_9e("model_9/weights_a3_f")
-    #model_9_inst4 = model_9e("model_9/weights_a4_f")
+    model_9_inst0 = model_9e("model_9/weights_c_f")
+    model_9_inst1 = model_9e("model_9/weights_a1_f")
+    model_9_inst2 = model_9e("model_9/weights_a2_f")
+    model_9_inst3 = model_9e("model_9/weights_a3_f")
+    model_9_inst4 = model_9e("model_9/weights_a4_f")
     model5_instance = Model5( weight_folder_path="model_5_c_f")
-    #model5_instance1 = Model5("model_5_a1_f")
-    #model5_instance2 = Model5("model_5_a2_f")
-    #model5_instance3 = Model5("model_5_a3_f")
-    #model5_instance4 = Model5("model_5_a4_f")
+    model5_instance1 = Model5(weight_folder_path="model_5_a1_f")
+    model5_instance2 = Model5(weight_folder_path="model_5_a2_f")
+    model5_instance3 = Model5(weight_folder_path="model_5_a3_f")
+    model5_instance4 = Model5(weight_folder_path="model_5_a4_f")
 
     '''
     logger.info ("training model ")
@@ -100,14 +100,7 @@ if __name__ == "__main__":
     model5_instance.train ( dev_path4, val_path4, "model_5_a4_f")
     '''
 
-    res = model5_instance.evaluate(light_path)
 
-
-
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss 0 ")
-    print(compute_loss("elim.csv",test_path))
 
     '''
     logger.info ("  ------------------------------------ evaluating model 9 ------------------------------------")
@@ -174,8 +167,29 @@ if __name__ == "__main__":
     print("loss 4 ")
     print(compute_loss("elim.csv",test_path))
 
+    
+    '''
+    logger.info ("  ------------------------------------ evaluating model 9+5  ------------------------------------")
 
+    res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss ensambled mean")
+    print(compute_loss("elim.csv",test_path))
 
+    res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss ensambled mean")
+    print(compute_loss("elim.csv",test_path))
+
+    res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
+    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+    val_probas_df_e.to_csv('elim.csv', index=False)
+    print("loss ensambled mean")
+    print(compute_loss("elim.csv",test_path))
+
+    
     logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
 
     model_95 = model_e([model_9_inst0,model5_instance])
@@ -222,25 +236,7 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-    logger.info ("  ------------------------------------ evaluating model 9+5  ------------------------------------")
 
-    res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled mean")
-    print(compute_loss("elim.csv",test_path))
-
-    res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled mean")
-    print(compute_loss("elim.csv",test_path))
-
-    res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
-    val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-    val_probas_df_e.to_csv('elim.csv', index=False)
-    print("loss ensambled mean")
-    print(compute_loss("elim.csv",test_path))
 
     logger.info ("  ------------------------------------ evaluating model 9+5 all  ------------------------------------")
 
@@ -262,4 +258,4 @@ if __name__ == "__main__":
     print("loss ensambled mean")
     print(compute_loss("elim.csv",test_path))
 
-    '''
+   
