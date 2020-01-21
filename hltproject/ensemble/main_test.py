@@ -79,7 +79,7 @@ if __name__ == "__main__":
     ##model_9_inst2 = model_9e("model_9/weights_a2_f")
     #model_9_inst3 = model_9e("model_9/weights_a3_f")
     #model_9_inst4 = model_9e("model_9/weights_a4_f")
-    model5_instance = Model5( "model_5_c_f")
+    model5_instance = Model5( weight_folder_path="model_5_c_f")
     #model5_instance1 = Model5("model_5_a1_f")
     #model5_instance2 = Model5("model_5_a2_f")
     #model5_instance3 = Model5("model_5_a3_f")
@@ -103,6 +103,10 @@ if __name__ == "__main__":
     res = model5_instance.evaluate(light_path,  "model_5_c_f")
 
     print(res)
+
+    print(res[:,:-1])
+    print(res[:.1,:])
+
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
     print("loss 0 ")
