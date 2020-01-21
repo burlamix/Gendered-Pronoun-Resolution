@@ -89,4 +89,4 @@ if __name__ == "__main__":
     
     model5_instance = Model5( "model_5_weights" )
     model5_instance.train ( dev_path, val_path )
-    model7_instance.evaluate (test_path )
+    model5_instance.evaluate (test_path )
