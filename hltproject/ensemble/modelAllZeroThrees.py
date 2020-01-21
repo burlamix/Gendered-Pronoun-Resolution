@@ -1,3 +1,4 @@
+import pandas as pd
 
 from common_interface import model
 
@@ -13,5 +14,6 @@ class modelAllZeroThrees(model):
     def train(self, train_fname, validation_fname ):
         pass
 
-    def evaluate(self, test_df ):
+    def evaluate(self, test_set_fname ):
+        test_df = pd.read_csv(test_set_fname, delimiter="\t")
         return  [[1/3, 1/3, 1/3] for i in range (len(test_df))]

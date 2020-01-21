@@ -3,6 +3,8 @@ import logging
 import os
 import pickle
 import math
+import uuid
+import datetime
 
 from common_interface import model
 
@@ -88,19 +90,18 @@ def min_entropy(valutaion_arrays):
 
 class model_e(model):
 
-    def __init__(self,modelli, model_names = None):
+    def __init__(self,modelli, model_names = None, base_output_folder = "predictions"):
         self.modelli = modelli
         self.model_names = []
         
-        self._OUTPUT_FOLDER = "predictions"
+        self.base_output_folder = base_output_folder
+        self.ensembler_id = uuid.uuid4 ()
 
         if model_names is None:
             self.model_names = [ "model_number_{}".format(i) for i in range (len(modelli))]
         else:
             assert len(modelli) == len(model_names)
-            self.model_names = model_names
-        
-        os.makedirs (self._OUTPUT_FOLDER, exist_ok=True)
+            self.model_names = model_names        
 
     def train(self,train_set, validation_set):
 
@@ -136,13 +137,19 @@ class model_e(model):
     def evaluate_list(self,datasets_fnames,combination="mean",report_fname=None):
 
         assert len (datasets_fnames) == len (self.modelli)
-
+        
         fout_report = None
+        output_folder = None
 
         # if report_fname is not None writes each individual model performance and the ensemble performance on a file
         # and writes the prediction for each model on a CSV file
         if report_fname:
-            report_fname = self._OUTPUT_FOLDER + "/" + report_fname
+
+            date = datetime.datetime.now().strftime("%Y-%m-%dT%H_%M_%S")
+
+            output_folder = "{}_{}_{}_{}".format (self.base_output_folder, date, combination, self.ensembler_id)
+            os.makedirs (output_folder, exist_ok=True)
+            report_fname = output_folder + "/" + report_fname
             fout_report = open (report_fname, "w")
             print ("Model name\tloss", file=fout_report)
             test_set = None
@@ -156,8 +163,6 @@ class model_e(model):
             test_set = pd.read_csv(test_set_fname, delimiter="\t")
 
             res = np.asarray (modello.evaluate(test_set_fname))
-            print("\n\n\n")
-            print(res)
             risultati.append( res )
 
             if fout_report:
@@ -165,7 +170,7 @@ class model_e(model):
                 test_path = test_set_fname
 
                 val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-                prediction_fname = self._OUTPUT_FOLDER + "/" + "{}_predictions.csv".format(model_name)
+                prediction_fname = output_folder + "/" + "{}_predictions.csv".format(model_name)
                 val_probas_df_e.to_csv(prediction_fname, index=False)
                 loss = compute_loss(prediction_fname,test_set_fname, print_p=False)
 
@@ -188,9 +193,9 @@ class model_e(model):
         if fout_report:
           
             val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
-            prediction_fname = self._OUTPUT_FOLDER + "/" + "ensemble_predictions.csv"
+            prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
-            loss = compute_loss(prediction_fname,test_path)
+            loss = compute_loss(prediction_fname,test_path, print_p=False)
 
             logger.info ("loss for ensemble: {} - predictions written to {}".format (loss, prediction_fname))
             print ("{}\t{}".format("ensemble", loss), file=fout_report)
@@ -216,6 +221,7 @@ if __name__ == "__main__":
 
     logger.info ("building ensemble model ")
     model_e_inst = model_e(modelli, model_names)
+    model_e_inst2 = model_e(modelli, model_names)
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
@@ -223,8 +229,7 @@ if __name__ == "__main__":
 
 
     logger.info ("evaluating model with the same test dataset for each model")
-    res = model_e_inst.evaluate(test_df_prod,combination="mean")
-
+    res = model_e_inst.evaluate(test_path,combination="mean")
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
@@ -241,4 +246,10 @@ if __name__ == "__main__":
     
     logger.info ("evaluating model with different test datasets for each model (with reporting)")
     res = model_e_inst.evaluate_list([test_path]*3, report_fname="report.tsv")
+    
+    logger.info ("evaluating model another time (with reporting) - voting. Predictions should be saved in a different folder")
+    res = model_e_inst.evaluate_list([test_path]*3, combination="max", report_fname="report.tsv")
+    
+    logger.info ("evaluating model with another ensembler. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*3, combination="max", report_fname="report.tsv")
 

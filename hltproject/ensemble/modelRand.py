@@ -1,6 +1,7 @@
 
 from common_interface import model
 import random
+import pandas as pd
 
 class modelRand(model):
     ''' 
@@ -14,5 +15,6 @@ class modelRand(model):
     def train(self, train_fname, validation_fname ):
         pass
 
-    def evaluate(self, test_df ):
+    def evaluate(self, test_set_fname ):
+        test_df = pd.read_csv(test_set_fname, delimiter="\t")
         return  [[random.random(), random.random(), random.random()] for i in range (len(test_df))]
