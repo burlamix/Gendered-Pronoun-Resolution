@@ -73,11 +73,11 @@ class Model5(model):
             '--do_predict',
             '--use_tpu=false',
             '--test_data_path=' + val_set,
-            '--output_dir=model_5/output/',
+            # '--output_dir=model_5/output/',
             '--output_file=output.csv'
             ],stdout=sys.stdout, stderr=sys.stderr).communicate()
 
-        result = pd.read_csv("./model_5/output/output.csv", delimiter=",")
+        result = pd.read_csv(weight_folder_path + "/output.csv", delimiter=",")
 
         return result.values
 
@@ -95,6 +95,6 @@ if __name__ == "__main__":
     #val_path = "../datasets/gap_validation_stage2.tsv"
 
     model5_instance = Model5 ()
-    model5_instance.train ( test_path, dev_path, "model_5_weights")
-    # print( model5_instance.evaluate (val_path, "model_5_weights" ))
+    # model5_instance.train ( test_path, dev_path, "model_5_weights")
+    print( model5_instance.evaluate (val_path, "model_5_weights" ))
 
