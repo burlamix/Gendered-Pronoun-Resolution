@@ -184,6 +184,15 @@ if __name__ == "__main__":
     model_95_all = model_e(istance_obj4, istance_name4)
 
 
+
+
+    
+
+    logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_9_all_min")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_9_all_mean")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_9_all_max")
+
    
     logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
     res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
@@ -208,10 +217,6 @@ if __name__ == "__main__":
                                                                                                             combination="max",report_fname="mode_95_all_max")
 
     
-    logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_9_all_min")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_9_all_mean")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_9_all_max")
 
 
 
