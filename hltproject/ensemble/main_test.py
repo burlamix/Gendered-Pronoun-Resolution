@@ -192,6 +192,7 @@ if __name__ == "__main__":
     res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_5_all_max")
 
 
+
     logger.info ("  ------------------------------------ evaluating model 9+5 all  ------------------------------------")
     res = model_95_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4.test_path,test_path1,test_path2,test_path3,test_path4],
                                                                                                             combination="min_entropy",report_fname="mode_95_all_min")
