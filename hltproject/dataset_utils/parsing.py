@@ -57,14 +57,13 @@ def parse_embeddings_dataset ( fname ):
 #TODO: maybe softmax is better
 def parse_prediction_file ( fin ):
     next (fin) # skip first line
-    for line in fin:
-        id, sa, sb, sn = line.split(',')
-        print(id,end="-")
-        print(sa,end="-")
-        print(sb,end="-")
-        print(sn,end="-")
-        total = float(sa) + float(sb) + float(sn)
-        pa = float(sa)/total
-        pb = float(sb)/total
-        pn = float(sn)/total
-        yield Prediction ( id, pa, pb, pn )
+    for lineno, line in enumerate (fin, 1):
+        try:
+            id, sa, sb, sn = line.split(',')
+            total = float(sa) + float(sb) + float(sn)
+            pa = float(sa)/total
+            pb = float(sb)/total
+            pn = float(sn)/total
+            yield Prediction ( id, pa, pb, pn )
+        except:
+            raise ValueError('Wrong prediction file format.\nFile: {}\nline number: {}\nline: {}'.format(fin, lineno, line))
