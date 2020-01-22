@@ -184,6 +184,12 @@ if __name__ == "__main__":
     model_95_all = model_e(istance_obj4, istance_name4)
 
 
+   
+    logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
+    res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
+    res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
+    res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
+
 
 
     logger.info ("  ------------------------------------ evaluating model 5 all  ------------------------------------")
@@ -211,8 +217,3 @@ if __name__ == "__main__":
 
 
 
-   
-    logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
-    res = model_95.evaluate_list([test_path,test_path],combination="min_entropy",report_fname="mode_95_min")
-    res = model_95.evaluate_list([test_path,test_path],combination="mean",report_fname="mode_95_all_mean")
-    res = model_95.evaluate_list([test_path,test_path],combination="max",report_fname="mode_95_max")
