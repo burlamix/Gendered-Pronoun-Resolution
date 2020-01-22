@@ -59,6 +59,10 @@ def parse_prediction_file ( fin ):
     next (fin) # skip first line
     for line in fin:
         id, sa, sb, sn = line.split(',')
+        print(id,end="-")
+        print(sa,end="-")
+        print(sb,end="-")
+        print(sn,end="-")
         total = float(sa) + float(sb) + float(sn)
         pa = float(sa)/total
         pb = float(sb)/total
