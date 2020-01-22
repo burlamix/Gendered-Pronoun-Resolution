@@ -186,16 +186,6 @@ if __name__ == "__main__":
 
 
 
-
-
-
-    
-    logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_9_all_min")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_9_all_mean")
-    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_9_all_max")
-
-
     logger.info ("  ------------------------------------ evaluating model 5 all  ------------------------------------")
     res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_5_all_min")
     res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_5_all_mean")
@@ -209,6 +199,16 @@ if __name__ == "__main__":
                                                                                                             combination="mean",report_fname="mode_95_all_mean")
     res = model_95_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4,test_path,test_path1,test_path2,test_path3,test_path4],
                                                                                                             combination="max",report_fname="mode_95_all_max")
+
+    
+    logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_9_all_min")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_9_all_mean")
+    res = model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_9_all_max")
+
+
+
+
 
    
     logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
