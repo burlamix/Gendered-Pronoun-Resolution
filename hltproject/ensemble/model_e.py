@@ -14,6 +14,8 @@ import hltproject.utils.config as cutils
 from modelRand import modelRand
 from modelAllZeroThrees import modelAllZeroThrees
 
+from collections import Counter
+
 import pandas as pd
 import numpy as np
 
@@ -41,7 +43,35 @@ def min_voting(valutaion_arrays):
 
     return new_ris
 
-def max_voting(valutaion_arrays):
+def voting (valutaion_arrays):
+    
+    ris= np.asarray(valutaion_arrays)
+    new_ris= []
+    number_of_models = ris.shape[0]
+    number_of_classes = ris.shape[2]
+
+    # logger.debug ("voting. ris Shape: {}".format(ris.shape))
+    
+    for sent_id in range(ris.shape[1]):     
+
+        predictions = ris[:, sent_id, :]
+        votes = np.argmax (predictions, axis=1)
+        votes_counter = Counter (votes)
+
+        ensembled_predictions = [ votes_counter[i]/number_of_models for i in range(number_of_classes) ]
+
+        # logger.debug ("            sentence: {}".format(sent_id))
+        # logger.debug ("            predictions: {}".format(predictions))
+        # logger.debug ("            votes: {}".format(votes))
+        # logger.debug ("            votes counter: {}".format(votes_counter))
+        # logger.debug ("            ensembled predictions: {}".format(ensembled_predictions))
+        # input()
+
+        new_ris.append(ensembled_predictions)
+    
+    return new_ris
+
+def max_simone(valutaion_arrays):
 
     ris= np.asarray(valutaion_arrays)
     new_ris= []
@@ -123,16 +153,19 @@ class model_e(model):
         if combination == "mean":
             return np.mean(risultati, axis=0)
 
-        elif combination == "max":
-            return np.asarray(max_voting(risultati))
+        elif combination == "simone":
+            return np.asarray(max_simone(risultati))
 
         elif combination == "min":
             return np.asarray(min_voting(risultati))
 
         elif combination == "min_entropy":
             return np.asarray(min_entropy(risultati))
+        
+        elif combination == "voting":
+            return np.asarray(voting(risultati))
 
-        return np.mean(risultati, axis=0)
+        raise ValueError ("Wrong combination name {}".format(combination))
         
     def evaluate_list(self,datasets_fnames,combination="mean",report_fname=None):
 
@@ -163,7 +196,6 @@ class model_e(model):
             test_set = pd.read_csv(test_set_fname, delimiter="\t")
 
             res = np.asarray (modello.evaluate(test_set_fname))
-            print(res)
             risultati.append( res )
 
             if fout_report:
@@ -181,19 +213,21 @@ class model_e(model):
         out = None
         if combination == "mean":
             out = np.mean(risultati, axis=0)
-        elif combination == "max":
-            out = np.asarray(max_voting(risultati))
+        elif combination == "simone":
+            out = np.asarray(max_simone(risultati))
         elif combination == "min":
             out = np.asarray(min_voting(risultati))
         elif combination == "min_entropy":
             out = np.asarray(min_entropy(risultati))
+        elif combination == "voting":
+            out = np.asarray(voting(risultati))
         else:
-            out = np.mean(risultati, axis=0)
+            raise ValueError ("Wrong combination name {}".format(combination))
         
         # Computing ensemble performances
         if fout_report:
           
-            val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+            val_probas_df_e = pd.DataFrame([test_set.ID, out[:,0], out[:,1], out[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
             loss = compute_loss(prediction_fname,test_path, print_p=False)
@@ -216,13 +250,14 @@ if __name__ == "__main__":
     m1 = modelAllZeroThrees ("")
     m2 = modelAllZeroThrees ("")
     m3 = modelRand ("")
+    m4 = modelRand ("")
     
-    modelli = [m1, m2, m3]
-    model_names = ["ZT1", "ZT2", "Random"]
+    modelli = [m1, m2, m3, m4]
+    model_names = ["ZT1", "ZT2", "Random1", "Random2"]
 
     logger.info ("building ensemble model ")
-    model_e_inst = model_e(modelli, model_names)
-    model_e_inst2 = model_e(modelli, model_names)
+    model_e_inst = model_e(modelli, model_names, 'test_ensemble')
+    model_e_inst2 = model_e(modelli, model_names, 'test_ensemble')
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
@@ -238,7 +273,7 @@ if __name__ == "__main__":
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (no reporting)")
-    res = model_e_inst.evaluate_list([test_path]*3)
+    res = model_e_inst.evaluate_list([test_path]*4)
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
@@ -246,11 +281,18 @@ if __name__ == "__main__":
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (with reporting)")
-    res = model_e_inst.evaluate_list([test_path]*3, report_fname="report.tsv")
+    res = model_e_inst.evaluate_list([test_path]*4, report_fname="report.tsv")
     
-    logger.info ("evaluating model another time (with reporting) - voting. Predictions should be saved in a different folder")
-    res = model_e_inst.evaluate_list([test_path]*3, combination="max", report_fname="report.tsv")
+    logger.info ("evaluating model another time (with reporting) - simone. Predictions should be saved in a different folder")
+    res = model_e_inst.evaluate_list([test_path]*4, combination="simone", report_fname="report.tsv")
     
     logger.info ("evaluating model with another ensembler. Predictions should be saved in a different folder")
-    res = model_e_inst2.evaluate_list([test_path]*3, combination="max", report_fname="report.tsv")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="simone", report_fname="report.tsv")
+    
+    logger.info ("evaluating model with combination=voting. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="voting", report_fname="report.tsv")
+
+    logger.info ("evaluating model with combination=min_entropy. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="min_entropy", report_fname="report.tsv")
+
 

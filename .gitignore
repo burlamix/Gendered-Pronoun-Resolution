@@ -12,6 +12,7 @@ utils
 hltproject/ensemble/model_7_weights
 hltproject/ensemble/model_9/weights
 hltproject/ensemble/model_5/bert
+hltproject/ensemble/test_ensemble*
 
 #compiled stuff
 *.py[cod]
