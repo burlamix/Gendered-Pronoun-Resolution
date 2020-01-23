@@ -163,7 +163,6 @@ class model_e(model):
             test_set = pd.read_csv(test_set_fname, delimiter="\t")
 
             res = np.asarray (modello.evaluate(test_set_fname))
-            print(res)
             risultati.append( res )
 
             if fout_report:
@@ -193,7 +192,7 @@ class model_e(model):
         # Computing ensemble performances
         if fout_report:
           
-            val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
+            val_probas_df_e = pd.DataFrame([test_set.ID, out[:,0], out[:,1], out[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
             loss = compute_loss(prediction_fname,test_path, print_p=False)
@@ -221,8 +220,8 @@ if __name__ == "__main__":
     model_names = ["ZT1", "ZT2", "Random"]
 
     logger.info ("building ensemble model ")
-    model_e_inst = model_e(modelli, model_names)
-    model_e_inst2 = model_e(modelli, model_names)
+    model_e_inst = model_e(modelli, model_names, 'test_ensamble')
+    model_e_inst2 = model_e(modelli, model_names, 'test_ensamble')
 
     test_df_prod = pd.read_csv(test_path, delimiter="\t")
     test_df_prod = test_df_prod.copy()
