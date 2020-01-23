@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
     logger.info ("  ------------------------------------ evaluating model 9+5 all  ------------------------------------")
     for comb in ["mean", "simone", "min_entropy", "voting"]:
-        model_95_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4.test_path,test_path1,test_path2,test_path3,test_path4],
+        model_95_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4,test_path,test_path1,test_path2,test_path3,test_path4],
                                                                                                             combination=comb,report_fname="mode_95_all_"+comb)
  
 
