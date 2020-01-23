@@ -185,7 +185,10 @@ if __name__ == "__main__":
 
 
 
-
+    logger.info ("  ------------------------------------ evaluating model 5 all  ------------------------------------")
+    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_5_all_min")
+    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_5_all_mean")
+    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_5_all_max")
     
 
     logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
@@ -201,10 +204,7 @@ if __name__ == "__main__":
 
 
 
-    logger.info ("  ------------------------------------ evaluating model 5 all  ------------------------------------")
-    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="min_entropy",report_fname="mode_5_all_min")
-    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="mean",report_fname="mode_5_all_mean")
-    res = model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination="max",report_fname="mode_5_all_max")
+
 
 
 
