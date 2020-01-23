@@ -165,7 +165,7 @@ class model_e(model):
         elif combination == "voting":
             return np.asarray(voting(risultati))
 
-        raise ValueError ("Wrong combination name")
+        raise ValueError ("Wrong combination name {}".format(combination))
         
     def evaluate_list(self,datasets_fnames,combination="mean",report_fname=None):
 
@@ -222,7 +222,7 @@ class model_e(model):
         elif combination == "voting":
             out = np.asarray(voting(risultati))
         else:
-            raise ValueError ("Wrong combination name")
+            raise ValueError ("Wrong combination name {}".format(combination))
         
         # Computing ensemble performances
         if fout_report:
@@ -291,4 +291,8 @@ if __name__ == "__main__":
     
     logger.info ("evaluating model with combination=voting. Predictions should be saved in a different folder")
     res = model_e_inst2.evaluate_list([test_path]*4, combination="voting", report_fname="report.tsv")
+
+    logger.info ("evaluating model with combination=min_entropy. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="min_entropy", report_fname="report.tsv")
+
 
