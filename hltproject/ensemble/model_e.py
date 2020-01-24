@@ -101,17 +101,18 @@ def min_entropy(valutaion_arrays):
     for xid in range(ris.shape[1]):     
 
         #for each model probab in each example
-        min_entropy = 99999999999999999999
+        min_entropy_so_far = math.inf
         for model_eval in ris[:, xid, :]:
 
             tot=0
             for x in model_eval:
                 tot = tot + (x*math.log2(x))
 
-            tot=tot*(-1)
+            tot = -tot
 
-            if(tot<min_entropy):
+            if(tot<min_entropy_so_far):
                 a = model_eval
+                min_entropy_so_far = tot
 
         new_ris.append(a)
 

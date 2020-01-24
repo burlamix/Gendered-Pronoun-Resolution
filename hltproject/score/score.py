@@ -55,6 +55,7 @@ def compute_loss ( model_fname, input_fname, print_p=True ):
         for sent in parse_input_dataset ( input_fin ):
             gold_classes[sent.id] = 1 if sent.A_coref else 2 if sent.B_coref else 3
         
+        number_of_errors = 0
         logssum = 0
         N = 0
         for pred in parse_prediction_file ( model_fin ):
@@ -65,11 +66,22 @@ def compute_loss ( model_fname, input_fname, print_p=True ):
             prob = pred[ gold_classes[pred.id] ]
             logssum += math.log ( max ( min ( prob, 1-1e-15 ), 1e-15 ) )
             N += 1
-        
+
+            if prob < 0.5:
+                number_of_errors += 1
+
+            # logger.debug ("prediction: %s", pred)
+            # logger.debug ("gold class for this prediction: %d", gold_classes[pred.id])
+            # logger.debug ("p, clamped: %f", max ( min ( prob, 1-1e-15 ), 1e-15  ))
+            # logger.debug ("log (p): %f", math.log (max ( min ( prob, 1-1e-15 ), 1e-15  )))
+            # logger.debug ("logsum so far: %f", logssum)
+            # input ()
+
         loss = -logssum / N
         
         if print_p:
             logger.info ("loss\t{}".format(loss))
+            logger.info ("number of wrong predictions\t{}/{}".format(number_of_errors, N))
             print ("loss\t{}".format(loss))
     
     return loss
