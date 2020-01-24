@@ -160,35 +160,38 @@ if __name__ == "__main__":
     print(compute_loss("elim.csv",test_path))
     '''
 
+    combinations_to_test = ["min_entropy"]
+    # combinations_to_test = [["mean", "simone", "min_entropy", "voting"]]
+
     istance_name1= ["model_9_inst0","model5_instance"]
     istance_obj1  = [model_9_inst0,model5_instance]
-    model_95 = model_e(istance_obj1, istance_name1)
+    model_95 = model_e(istance_obj1, istance_name1, 'predictions_model95')
 
     istance_name2 = ["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4"]
     istance_obj2  = [ model_9_inst0 , model_9_inst1 , model_9_inst2 , model_9_inst3 , model_9_inst4]
-    model_9_all = model_e(istance_obj2, istance_name2)
+    model_9_all = model_e(istance_obj2, istance_name2, 'predictions_model9all')
 
     istance_name3 =["model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
     istance_obj3  =[ model5_instance , model5_instance1 , model5_instance2 , model5_instance3 , model5_instance4]
-    model_5_all = model_e(istance_obj3, istance_name3)
+    model_5_all = model_e(istance_obj3, istance_name3, 'predictions_model5all')
 
     istance_name4 = ["model_9_inst0","model_9_inst1","model_9_inst2","model_9_inst3","model_9_inst4","model5_instance","model5_instance1","model5_instance2","model5_instance3","model5_instance4"]
     istance_obj4  = [ model_9_inst0 , model_9_inst1 , model_9_inst2 , model_9_inst3 , model_9_inst4 , model5_instance , model5_instance1 , model5_instance2 , model5_instance3 , model5_instance4]
-    model_95_all = model_e(istance_obj4, istance_name4)
+    model_95_all = model_e(istance_obj4, istance_name4, 'predictions_model95_all')
 
     logger.info ("  ------------------------------------ evaluating model 5 all  ------------------------------------")
-    for comb in ["mean", "simone", "min_entropy", "voting"]:
+    for comb in combinations_to_test:
         model_5_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination=comb,report_fname="model_5_all_"+comb)
 
     logger.info ("  ------------------------------------ evaluating model 9 all  ------------------------------------")
-    for comb in ["mean", "simone", "min_entropy", "voting"]:
-        model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination=comb,report_fname="mode_9_all_"+comb)
+    for comb in combinations_to_test:
+        model_9_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4],combination=comb,report_fname="model_9_all_"+comb)
 
     logger.info ("  \n\n\n\n ------------------------------------ evaluating model 9+5  ------------------------------------")
-    for comb in ["mean", "simone", "min_entropy", "voting"]:
-        model_95.evaluate_list([test_path,test_path],combination=comb,report_fname="mode_95_min_"+comb)
+    for comb in combinations_to_test:
+        model_95.evaluate_list([test_path,test_path],combination=comb,report_fname="model_95_"+comb)
 
     logger.info ("  ------------------------------------ evaluating model 9+5 all  ------------------------------------")
-    for comb in ["mean", "simone", "min_entropy", "voting"]:
+    for comb in combinations_to_test:
         model_95_all.evaluate_list([test_path,test_path1,test_path2,test_path3,test_path4,test_path,test_path1,test_path2,test_path3,test_path4],
-                                                                                                            combination=comb,report_fname="mode_95_all_"+comb)
+                                                                                                            combination=comb,report_fname="model_95_all_"+comb)
