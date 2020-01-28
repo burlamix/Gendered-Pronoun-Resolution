@@ -233,8 +233,8 @@ class model_e(model):
             val_probas_df_e.to_csv(prediction_fname, index=False)
             loss = compute_loss(prediction_fname,test_path, enable_print=False)
 
-            logger.info ("loss for ensemble: {} - predictions written to {}".format (loss, prediction_fname))
-            print ("{}\t{}".format("ensemble", loss), file=fout_report)
+            logger.info ("loss for ensemble({}): {} - predictions written to {}".format (combination, loss, prediction_fname))
+            print ("ensemble({})\t{}".format(combination, loss), file=fout_report)
             logger.info ("Done. Report written to {}".format(report_fname))
 
         return out
