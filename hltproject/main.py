@@ -5,6 +5,7 @@ This is the entry point of the application.
 
 import argparse
 import os
+import sys
 
 import logging
 import logging.config
@@ -83,14 +84,14 @@ def _compute_bert_embeddings ( args ):
 def _loss ( args ):
     model_fname = args.model
     gold_fname = args.input
+    print_w = args.wrong_predictions
     logger.info ("Computing loss for predictions: {}, original input file: {}".format(model_fname, gold_fname))
-    compute_loss ( model_fname, gold_fname )
+    compute_loss ( model_fname, gold_fname, print_wrong_predictions=print_w )
     
 
 def main():
     parser = argparse.ArgumentParser(prog='hltproject')
     subparsers = parser.add_subparsers()
-
 
 
                               
@@ -148,9 +149,17 @@ def main():
         help='compute loss for one prediction')
     parser_loss.add_argument ('model', help='model predictions', type=existing_file)
     parser_loss.add_argument ('input', help='input dataset', type=existing_file)
+    parser_loss.add_argument('-w', '--wrong-predictions', default=False,
+                            action="store_true",
+                            help='whether show the ids of the wrong predicted setences')
     parser_loss.set_defaults(func=_loss)
     
     args = parser.parse_args()
+
+    if not "func" in args:
+        parser.print_usage ()
+        sys.exit (1)
+
     args.func(args)
     
         

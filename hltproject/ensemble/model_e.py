@@ -206,7 +206,7 @@ class model_e(model):
                 val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
                 prediction_fname = output_folder + "/" + "{}_predictions.csv".format(model_name)
                 val_probas_df_e.to_csv(prediction_fname, index=False)
-                loss = compute_loss(prediction_fname,test_set_fname, print_p=False)
+                loss = compute_loss(prediction_fname,test_set_fname, enable_print=False)
 
                 logger.info ("loss for model {}: {} - predictions written to {}".format (model_name, loss, prediction_fname))
                 print ("{}\t{}".format(model_name, loss), file=fout_report)
@@ -231,7 +231,7 @@ class model_e(model):
             val_probas_df_e = pd.DataFrame([test_set.ID, out[:,0], out[:,1], out[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
-            loss = compute_loss(prediction_fname,test_path, print_p=False)
+            loss = compute_loss(prediction_fname,test_path, enable_print=False)
 
             logger.info ("loss for ensemble: {} - predictions written to {}".format (loss, prediction_fname))
             print ("{}\t{}".format("ensemble", loss), file=fout_report)
@@ -270,7 +270,7 @@ if __name__ == "__main__":
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
-    loss = compute_loss("elim.csv",test_path, print_p=False)
+    loss = compute_loss("elim.csv",test_path, enable_print=False)
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (no reporting)")
@@ -278,7 +278,7 @@ if __name__ == "__main__":
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
-    loss = compute_loss("elim.csv",test_path, print_p=False)
+    loss = compute_loss("elim.csv",test_path, enable_print=False)
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (with reporting)")

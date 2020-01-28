@@ -48,14 +48,14 @@ def compute_loss_df ( val_probas_df, input_fname ):
         print ("loss\t{}".format(loss))
             
 
-def compute_loss ( model_fname, input_fname, print_p=True ):
+def compute_loss ( model_fname, input_fname, enable_print=True, print_wrong_predictions=False ):
     
     gold_classes = {}
     with open ( model_fname ) as model_fin, open ( input_fname ) as input_fin:
         for sent in parse_input_dataset ( input_fin ):
             gold_classes[sent.id] = 1 if sent.A_coref else 2 if sent.B_coref else 3
         
-        number_of_errors = 0
+        errored_ids = []
         logssum = 0
         N = 0
         for pred in parse_prediction_file ( model_fin ):
@@ -68,7 +68,7 @@ def compute_loss ( model_fname, input_fname, print_p=True ):
             N += 1
 
             if prob < 0.5:
-                number_of_errors += 1
+                errored_ids.append (pred.id)
 
             # logger.debug ("prediction: %s", pred)
             # logger.debug ("gold class for this prediction: %d", gold_classes[pred.id])
@@ -79,10 +79,12 @@ def compute_loss ( model_fname, input_fname, print_p=True ):
 
         loss = -logssum / N
         
-        if print_p:
+        if enable_print:
             logger.info ("loss\t{}".format(loss))
-            logger.info ("number of wrong predictions\t{}/{}".format(number_of_errors, N))
             print ("loss\t{}".format(loss))
+            if print_wrong_predictions:
+                logger.info ("number of wrong predictions\t{}/{}".format(len(errored_ids), N))
+                logger.info ("ids of the wrong predicted sentences: {}".format(errored_ids))
     
     return loss
             
