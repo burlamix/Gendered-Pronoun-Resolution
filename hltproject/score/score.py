@@ -84,7 +84,7 @@ def compute_loss ( model_fname, input_fname, enable_print=True, print_wrong_pred
             print ("loss\t{}".format(loss))
             if print_wrong_predictions:
                 logger.info ("number of wrong predictions\t{}/{}".format(len(errored_ids), N))
-                logger.info ("ids of the wrong predicted sentences: {}".format(errored_ids))
+                logger.info ("ids of the wrong predicted sentences: {}".format(';'.join(errored_ids)))
     
     return loss
             
