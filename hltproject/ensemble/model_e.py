@@ -9,6 +9,7 @@ import datetime
 from common_interface import model
 
 from hltproject.score.score import compute_loss
+from hltproject.score.score import compute_squared_loss
 import hltproject.utils.config as cutils
 
 from modelRand import modelRand
@@ -220,7 +221,7 @@ class model_e(model):
             os.makedirs (output_folder, exist_ok=True)
             report_fname = output_folder + "/" + report_fname
             fout_report = open (report_fname, "w")
-            print ("Model name\tloss", file=fout_report)
+            print ("Model name\tlogloss\tsquared loss", file=fout_report)
             test_set = None
             test_path = None
 
@@ -241,11 +242,16 @@ class model_e(model):
                 val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
                 prediction_fname = output_folder + "/" + "{}_predictions.csv".format(model_name)
                 val_probas_df_e.to_csv(prediction_fname, index=False)
-                loss = compute_loss(prediction_fname,test_set_fname, enable_print=False)
+                
+                logloss = compute_loss (prediction_fname,test_set_fname, enable_print=False)
+                squaredloss = compute_squared_loss (prediction_fname,test_set_fname, enable_print=False)
 
-                logger.info ("loss for model {}: {} - predictions written to {}".format (model_name, loss, prediction_fname))
-                print ("{}\t{}".format(model_name, loss), file=fout_report)
+                logger.info ("logloss      for model {}: {}".format (model_name, logloss))
+                logger.info ("squared loss for model {}: {}".format (model_name, squaredloss))
+                
+                print ("{}\t{}\t{}".format(model_name, logloss, squaredloss), file=fout_report)
 
+                
         out = None
         if combination == "mean":
             out = np.mean(risultati, axis=0)
@@ -268,10 +274,14 @@ class model_e(model):
             val_probas_df_e = pd.DataFrame([test_set.ID, out[:,0], out[:,1], out[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
-            loss = compute_loss(prediction_fname,test_path, enable_print=False)
+            
+            logloss = compute_loss(prediction_fname,test_path, enable_print=False)
+            squaredloss = compute_squared_loss (prediction_fname,test_path, enable_print=False)
 
-            logger.info ("loss for ensemble({}): {} - predictions written to {}".format (combination, loss, prediction_fname))
-            print ("ensemble({})\t{}".format(combination, loss), file=fout_report)
+            logger.info ("logloss     for ensemble({}): {}".format (combination, logloss))
+            logger.info ("squaredloss for ensemble({}): {}".format (combination, squaredloss))
+            print ("ensemble({})\t{}\t{}".format(combination, logloss, squaredloss), file=fout_report)
+            
             logger.info ("Done. Report written to {}".format(report_fname))
 
         return out
