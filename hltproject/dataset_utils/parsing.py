@@ -54,7 +54,6 @@ def parse_embeddings_dataset ( fname ):
             toks.append (str_tok)
             embs.append (str_to_embedding (str_emb))
 
-#TODO: maybe softmax is better
 def parse_prediction_file ( fin ):
     next (fin) # skip first line
     for lineno, line in enumerate (fin, 1):

@@ -16,6 +16,7 @@ from hltproject.dataset_utils.compute_bert_embeddings import compute_bert_embedd
 from hltproject.baseline import baseline_cosine
 from hltproject.baseline import baseline_supervised
 from hltproject.score.score import compute_loss
+from hltproject.score.score import compute_squared_loss
 
 logging.config.dictConfig(
     cutils.load_logger_config_file())
@@ -87,6 +88,12 @@ def _loss ( args ):
     print_w = args.wrong_predictions
     logger.info ("Computing loss for predictions: {}, original input file: {}".format(model_fname, gold_fname))
     compute_loss ( model_fname, gold_fname, print_wrong_predictions=print_w )
+
+def _squared_loss ( args ):
+    model_fname = args.model
+    gold_fname = args.input
+    logger.info ("Computing squared loss for predictions: {}, original input file: {}".format(model_fname, gold_fname))
+    compute_squared_loss ( model_fname, gold_fname )
     
 
 def main():
@@ -153,6 +160,13 @@ def main():
                             action="store_true",
                             help='whether show the ids of the wrong predicted setences')
     parser_loss.set_defaults(func=_loss)
+    
+    parser_sq_loss = subparsers.add_parser(
+        'squared-loss', formatter_class=argparse.RawTextHelpFormatter,
+        help='compute squared loss for one prediction')
+    parser_sq_loss.add_argument ('model', help='model predictions', type=existing_file)
+    parser_sq_loss.add_argument ('input', help='input dataset', type=existing_file)
+    parser_sq_loss.set_defaults(func=_squared_loss)
     
     args = parser.parse_args()
 

@@ -49,7 +49,10 @@ def compute_loss_df ( val_probas_df, input_fname ):
             
 
 def compute_loss ( model_fname, input_fname, enable_print=True, print_wrong_predictions=False ):
-    
+    '''
+      compute logloss as defined in the "gendered pronoun resolution" competition: https://www.kaggle.com/c/gendered-pronoun-resolution/overview/evaluation
+    '''
+
     gold_classes = {}
     with open ( model_fname ) as model_fin, open ( input_fname ) as input_fin:
         for sent in parse_input_dataset ( input_fin ):
@@ -87,4 +90,49 @@ def compute_loss ( model_fname, input_fname, enable_print=True, print_wrong_pred
                 logger.info ("ids of the wrong predicted sentences: {}".format(';'.join(errored_ids)))
     
     return loss
+
+def compute_squared_loss ( model_fname, input_fname, enable_print=True ):
+    '''
+      compute mean squared loss defined as
+      loss = 1/N sum_i sum_c ( y_ic - p_ic )^2
+
+      where:
+      N is the total number of sentence
+      i iterates all the sentences (from 1 to N)
+      c iterates all the classes (A, B, Neither)
+      y_ic is the real probability for sentence i, class c. y_ic is either 0 or 1
+      p_ic is the predicted probability for sentence i, class c.
+    '''
+
+    gold_classes = {}
+    with open ( model_fname ) as model_fin, open ( input_fname ) as input_fin:
+        for sent in parse_input_dataset ( input_fin ):
+            gold_classes[sent.id] = (1,0,0) if sent.A_coref else (0,1,0) if sent.B_coref else (0,0,1)
+        
+        square_sum = 0
+        N = 0
+        for pred in parse_prediction_file ( model_fin ):
+            if not pred.id in gold_classes:
+                logger.warn ("unknown prediction id: {}".format(pred.id))
+                continue
             
+            y = gold_classes[pred.id]
+            p = (pred.A_prob, pred.B_prob, pred.N_prob)
+            loss_for_this_sentence = sum ( (yc-pc)**2 for yc,pc in zip (y,p) )
+
+            square_sum += loss_for_this_sentence
+            N += 1
+
+            # logger.debug ("prediction: %s", pred)
+            # logger.debug ("gold probabilities for this prediction: %s", gold_classes[pred.id])
+            # logger.debug ("loss for this sentence: %f", loss_for_this_sentence)
+            # logger.debug ("loss so far: %f", square_sum)
+            # input ()
+
+        loss = square_sum / N
+        
+        if enable_print:
+            logger.info ("squared loss\t{}".format(loss))
+            print ("squared loss\t{}".format(loss))
+    
+    return loss
