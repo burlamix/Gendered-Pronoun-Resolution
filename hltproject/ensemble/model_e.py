@@ -71,6 +71,38 @@ def voting (valutaion_arrays):
     
     return new_ris
 
+def smoothed_voting (valutaion_arrays, smooth_by=0.01):
+    
+    ris= np.asarray(valutaion_arrays)
+    new_ris= []
+    number_of_models = ris.shape[0]
+    number_of_classes = ris.shape[2]
+
+    # assigned probability is smooth_by + p*( 1 - number_of_classes * smooth_by )
+    # where p is the probability assigned by the "voting" method
+    split = 1 - smooth_by * number_of_classes
+
+    # logger.debug ("voting. ris Shape: {}".format(ris.shape))
+    
+    for sent_id in range(ris.shape[1]):     
+
+        predictions = ris[:, sent_id, :]
+        votes = np.argmax (predictions, axis=1)
+        votes_counter = Counter (votes)
+
+        ensembled_predictions = [ smooth_by + (votes_counter[i]/number_of_models)*split for i in range(number_of_classes) ]
+
+        # logger.debug ("            sentence: {}".format(sent_id))
+        # logger.debug ("            predictions: {}".format(predictions))
+        # logger.debug ("            votes: {}".format(votes))
+        # logger.debug ("            votes counter: {}".format(votes_counter))
+        # logger.debug ("            ensembled predictions: {}".format(ensembled_predictions))
+        # input()
+
+        new_ris.append(ensembled_predictions)
+    
+    return new_ris
+
 def max_simone(valutaion_arrays):
 
     ris= np.asarray(valutaion_arrays)
@@ -165,6 +197,9 @@ class model_e(model):
         
         elif combination == "voting":
             return np.asarray(voting(risultati))
+        
+        elif combination == "smoothed_voting":
+            return np.asarray(smoothed_voting(risultati))
 
         raise ValueError ("Wrong combination name {}".format(combination))
         
@@ -222,6 +257,8 @@ class model_e(model):
             out = np.asarray(min_entropy(risultati))
         elif combination == "voting":
             out = np.asarray(voting(risultati))
+        elif combination == "smoothed_voting":
+            out = np.asarray(smoothed_voting(risultati))
         else:
             raise ValueError ("Wrong combination name {}".format(combination))
         
@@ -292,8 +329,10 @@ if __name__ == "__main__":
     
     logger.info ("evaluating model with combination=voting. Predictions should be saved in a different folder")
     res = model_e_inst2.evaluate_list([test_path]*4, combination="voting", report_fname="report.tsv")
+    
+    logger.info ("evaluating model with combination=smoothed_voting. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="smoothed_voting", report_fname="report.tsv")
 
     logger.info ("evaluating model with combination=min_entropy. Predictions should be saved in a different folder")
     res = model_e_inst2.evaluate_list([test_path]*4, combination="min_entropy", report_fname="report.tsv")
-
 
