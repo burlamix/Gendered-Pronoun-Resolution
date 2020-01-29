@@ -14,6 +14,7 @@ import hltproject.utils.config as cutils
 
 from modelRand import modelRand
 from modelAllZeroThrees import modelAllZeroThrees
+from modelFile import modelFile
 
 from collections import Counter
 
@@ -298,10 +299,10 @@ if __name__ == "__main__":
     m1 = modelAllZeroThrees ("")
     m2 = modelAllZeroThrees ("")
     m3 = modelRand ("")
-    m4 = modelRand ("")
+    m4 = modelFile ("single_models_predictions/model5_anonymized_1_predictions.csv")
     
     modelli = [m1, m2, m3, m4]
-    model_names = ["ZT1", "ZT2", "Random1", "Random2"]
+    model_names = ["ZT1", "ZT2", "Random1", "File"]
 
     logger.info ("building ensemble model ")
     model_e_inst = model_e(modelli, model_names, 'test_ensemble')
