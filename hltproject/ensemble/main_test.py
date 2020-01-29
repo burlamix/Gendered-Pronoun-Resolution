@@ -3,9 +3,9 @@ import os
 import pandas as pd
 import numpy as np
 
-#from model_9e import model_9e
+from model_9e import model_9e
 from model_e import model_e
-#from model5 import Model5
+from model5 import Model5
 
 from modelFile import modelFile
 
