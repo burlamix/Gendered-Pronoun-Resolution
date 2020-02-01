@@ -431,12 +431,15 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
       d = d.repeat()
     else:
       d = tf.data.TFRecordDataset(input_file)
+      print("INPUT_FN_BUILDER", "NO TRAINING", "INPUT_FILE", input_file)
+      print("INPUT_FN_BUILDER", "NO TRAINING", "D", d)
 
     d = d.apply(
         tf.contrib.data.map_and_batch(
             lambda record: _decode_record(record, name_to_features),
             batch_size=batch_size,
             drop_remainder=drop_remainder))
+    print("INPUT_FN_BUILDER", "NO TRAINING", "D DATASET", d._input_dataset)
 
     return d
 
@@ -791,6 +794,7 @@ def main(_):
   if FLAGS.do_predict:
     predict_examples = processor.get_test_examples(FLAGS.data_dir)
     num_actual_predict_examples = len(predict_examples)
+    print("***************************************" + str(num_actual_predict_examples))
     if FLAGS.use_tpu:
       while len(predict_examples) % FLAGS.predict_batch_size != 0:
         predict_examples.append(PaddingInputExample())
@@ -807,14 +811,21 @@ def main(_):
                     len(predict_examples) - num_actual_predict_examples)
     tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
 
-    predict_drop_remainder = True if FLAGS.use_tpu else False
+    predict_drop_remainder = False # True if FLAGS.use_tpu else False
     predict_input_fn = file_based_input_fn_builder(
         input_file=predict_file,
         seq_length=FLAGS.max_seq_length,
         is_training=False,
         drop_remainder=predict_drop_remainder)
 
+    print("**************** MAX_SEQ_LENGTH " + str(FLAGS.max_seq_length))
+
     result = estimator.predict(input_fn=predict_input_fn)
+
+    print("PREDICT_EXAMPLES", len(predict_examples))
+    print("INPUT_FN", predict_input_fn)
+    print("RESULT", result)
+    print("LABEL LIST", label_list)
 
     # My own algorithm for keeping probs away from extremes 0 and 1
     # Standard clipping might be better, but this is what I used for kaggle comp.
@@ -829,14 +840,20 @@ def main(_):
       guids.append(example.guid)
 
     output_predict_file = os.path.join(FLAGS.output_dir, FLAGS.output_file)
+    print("***** PREDICT FILE " + output_predict_file)
+
     with tf.gfile.GFile(output_predict_file, "w") as writer:
         tf.logging.info("***** Predict results *****")
         writer.write("ID,A,B,NEITHER\n")
+
         for i, prediction in enumerate(result):
+            print("***** Predict results ***** " + str(i), end="\r")
             guid = guids[i]
             out = prediction['probabilities'].tolist()
             output_line = guid + ',' + ",".join(str(smooth(result)) for result in out) + "\n"
             writer.write(output_line)
+
+        print()
 
 ################################################################################
 #                                                                              #

@@ -1,0 +1,12 @@
+model_5_weights/
+model_7_weights/
+model_9_weights/
+pytorch_model.bin
+model_5/bert/uncased_L-24_H-1024_A-16
+git_env_coeref/
+model_5_a1_f/
+model_5_a2_f/
+model_5_a3_f/
+model_5_a4_f/
+model_5_c_f/
+

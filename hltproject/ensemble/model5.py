@@ -13,7 +13,7 @@ logger = logging.getLogger ( __name__ )
 class Model5(model):
 
     def __init__(self, weight_folder_path):
-        self.weight_folder_path = weight_folder_path 
+        self.weight_folder_path = weight_folder_path
         
     def train(self, dev_set, val_set):
         bert_large_url = "https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip"
@@ -30,6 +30,7 @@ class Model5(model):
         proc = subprocess.Popen([
             'python',
             'model_5/gap_ken_gap_classifier.py',
+            '--data_dir=' + self.weight_folder_path,
             '--output_dir=' + self.weight_folder_path,
             '--pre_train',
             '--use_tpu=false',
@@ -42,6 +43,7 @@ class Model5(model):
         proc = subprocess.Popen([
             'python',
             'model_5/gap_ken_gap_classifier.py',
+            '--data_dir=' + self.weight_folder_path,
             '--output_dir=' + self.weight_folder_path,
             '--do_train',
             '--use_tpu=false',
@@ -55,6 +57,7 @@ class Model5(model):
         proc = subprocess.Popen([
             'python',
             'model_5/gap_ken_gap_classifier.py',
+            '--data_dir=' + self.weight_folder_path,
             '--output_dir=' + self.weight_folder_path,
             '--do_eval',
             '--use_tpu=false',
@@ -66,9 +69,15 @@ class Model5(model):
         # python3 gap_ken_gap_classifier.py --do_predict --use_tpu=false
 
         # flags.DEFINE_bool("do_predict", False, "Predict mode on the test set.")
+        print("***************** EVAL *****************")
+        print("WEIGHT = " + self.weight_folder_path)
+        print("WEIGHT = " + test_set)
+        print("***************** EVAL *****************")
+
         proc = subprocess.Popen([
             'python',
             'model_5/gap_ken_gap_classifier.py',
+            '--data_dir=' + self.weight_folder_path,
             '--output_dir=' + self.weight_folder_path,
             '--do_predict',
             '--use_tpu=false',
@@ -82,11 +91,21 @@ class Model5(model):
 
 # RUN the model
 if __name__ == "__main__":
-    
-    dev_path = "../datasets/gap-light.tsv"
-    val_path = "../datasets/gap-light.tsv"
-    test_path = "../datasets/gap-light.tsv"
-    
-    model5_instance = Model5( "model_5_weights" )
-    model5_instance.train ( dev_path, val_path )
-    model5_instance.evaluate (test_path )
+
+    #dev_path = "../datasets/gap-light.tsv"
+    #val_path = "../datasets/gap-light.tsv"
+    #test_path = "../datasets/gap-light.tsv"
+
+    weight = "model_5_weights"
+    weight = "model_5_a1_f"
+    # weight = "model_5_a2_f"
+    # weight = "model_5_a3_f"
+    # weight = "model_5_a4_f"
+    # weight = "model_5_c_f"
+
+    # test_path = "../datasets/gap-test.tsv"
+    test_path = "../datasets/gap-validation.tsv"
+
+    model5_instance = Model5(weight)
+    # model5_instance.train ( dev_path, val_path )
+    print(model5_instance.evaluate(test_path))
