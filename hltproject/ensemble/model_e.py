@@ -9,10 +9,12 @@ import datetime
 from common_interface import model
 
 from hltproject.score.score import compute_loss
+from hltproject.score.score import compute_squared_loss
 import hltproject.utils.config as cutils
 
 from modelRand import modelRand
 from modelAllZeroThrees import modelAllZeroThrees
+from modelFile import modelFile
 
 from collections import Counter
 
@@ -59,6 +61,38 @@ def voting (valutaion_arrays):
         votes_counter = Counter (votes)
 
         ensembled_predictions = [ votes_counter[i]/number_of_models for i in range(number_of_classes) ]
+
+        # logger.debug ("            sentence: {}".format(sent_id))
+        # logger.debug ("            predictions: {}".format(predictions))
+        # logger.debug ("            votes: {}".format(votes))
+        # logger.debug ("            votes counter: {}".format(votes_counter))
+        # logger.debug ("            ensembled predictions: {}".format(ensembled_predictions))
+        # input()
+
+        new_ris.append(ensembled_predictions)
+    
+    return new_ris
+
+def smoothed_voting (valutaion_arrays, smooth_by=0.01):
+    
+    ris= np.asarray(valutaion_arrays)
+    new_ris= []
+    number_of_models = ris.shape[0]
+    number_of_classes = ris.shape[2]
+
+    # assigned probability is smooth_by + p*( 1 - number_of_classes * smooth_by )
+    # where p is the probability assigned by the "voting" method
+    split = 1 - smooth_by * number_of_classes
+
+    # logger.debug ("voting. ris Shape: {}".format(ris.shape))
+    
+    for sent_id in range(ris.shape[1]):     
+
+        predictions = ris[:, sent_id, :]
+        votes = np.argmax (predictions, axis=1)
+        votes_counter = Counter (votes)
+
+        ensembled_predictions = [ smooth_by + (votes_counter[i]/number_of_models)*split for i in range(number_of_classes) ]
 
         # logger.debug ("            sentence: {}".format(sent_id))
         # logger.debug ("            predictions: {}".format(predictions))
@@ -165,6 +199,9 @@ class model_e(model):
         
         elif combination == "voting":
             return np.asarray(voting(risultati))
+        
+        elif combination == "smoothed_voting":
+            return np.asarray(smoothed_voting(risultati))
 
         raise ValueError ("Wrong combination name {}".format(combination))
         
@@ -185,7 +222,7 @@ class model_e(model):
             os.makedirs (output_folder, exist_ok=True)
             report_fname = output_folder + "/" + report_fname
             fout_report = open (report_fname, "w")
-            print ("Model name\tloss", file=fout_report)
+            print ("Model name\tlogloss\tsquared loss", file=fout_report)
             test_set = None
             test_path = None
 
@@ -206,11 +243,16 @@ class model_e(model):
                 val_probas_df_e = pd.DataFrame([test_set.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
                 prediction_fname = output_folder + "/" + "{}_predictions.csv".format(model_name)
                 val_probas_df_e.to_csv(prediction_fname, index=False)
-                loss = compute_loss(prediction_fname,test_set_fname, print_p=False)
+                
+                logloss = compute_loss (prediction_fname,test_set_fname, enable_print=False)
+                squaredloss = compute_squared_loss (prediction_fname,test_set_fname, enable_print=False)
 
-                logger.info ("loss for model {}: {} - predictions written to {}".format (model_name, loss, prediction_fname))
-                print ("{}\t{}".format(model_name, loss), file=fout_report)
+                logger.info ("logloss      for model {}: {}".format (model_name, logloss))
+                logger.info ("squared loss for model {}: {}".format (model_name, squaredloss))
+                
+                print ("{}\t{}\t{}".format(model_name, logloss, squaredloss), file=fout_report)
 
+                
         out = None
         if combination == "mean":
             out = np.mean(risultati, axis=0)
@@ -222,6 +264,8 @@ class model_e(model):
             out = np.asarray(min_entropy(risultati))
         elif combination == "voting":
             out = np.asarray(voting(risultati))
+        elif combination == "smoothed_voting":
+            out = np.asarray(smoothed_voting(risultati))
         else:
             raise ValueError ("Wrong combination name {}".format(combination))
         
@@ -231,10 +275,14 @@ class model_e(model):
             val_probas_df_e = pd.DataFrame([test_set.ID, out[:,0], out[:,1], out[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
             prediction_fname = output_folder + "/" + "ensemble_predictions.csv"
             val_probas_df_e.to_csv(prediction_fname, index=False)
-            loss = compute_loss(prediction_fname,test_path, print_p=False)
+            
+            logloss = compute_loss(prediction_fname,test_path, enable_print=False)
+            squaredloss = compute_squared_loss (prediction_fname,test_path, enable_print=False)
 
-            logger.info ("loss for ensemble: {} - predictions written to {}".format (loss, prediction_fname))
-            print ("{}\t{}".format("ensemble", loss), file=fout_report)
+            logger.info ("logloss     for ensemble({}): {}".format (combination, logloss))
+            logger.info ("squaredloss for ensemble({}): {}".format (combination, squaredloss))
+            print ("ensemble({})\t{}\t{}".format(combination, logloss, squaredloss), file=fout_report)
+            
             logger.info ("Done. Report written to {}".format(report_fname))
 
         return out
@@ -251,10 +299,10 @@ if __name__ == "__main__":
     m1 = modelAllZeroThrees ("")
     m2 = modelAllZeroThrees ("")
     m3 = modelRand ("")
-    m4 = modelRand ("")
+    m4 = modelFile ("single_models_predictions/model5_anonymized_1_predictions.csv")
     
     modelli = [m1, m2, m3, m4]
-    model_names = ["ZT1", "ZT2", "Random1", "Random2"]
+    model_names = ["ZT1", "ZT2", "Random1", "File"]
 
     logger.info ("building ensemble model ")
     model_e_inst = model_e(modelli, model_names, 'test_ensemble')
@@ -270,7 +318,7 @@ if __name__ == "__main__":
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
-    loss = compute_loss("elim.csv",test_path, print_p=False)
+    loss = compute_loss("elim.csv",test_path, enable_print=False)
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (no reporting)")
@@ -278,7 +326,7 @@ if __name__ == "__main__":
 
     val_probas_df_e= pd.DataFrame([test_df_prod.ID, res[:,0], res[:,1], res[:,2]], index=['ID', 'A', 'B', 'NEITHER']).transpose()
     val_probas_df_e.to_csv('elim.csv', index=False)
-    loss = compute_loss("elim.csv",test_path, print_p=False)
+    loss = compute_loss("elim.csv",test_path, enable_print=False)
     logger.info ("ensemble loss  {}".format(loss))
     
     logger.info ("evaluating model with different test datasets for each model (with reporting)")
@@ -292,8 +340,10 @@ if __name__ == "__main__":
     
     logger.info ("evaluating model with combination=voting. Predictions should be saved in a different folder")
     res = model_e_inst2.evaluate_list([test_path]*4, combination="voting", report_fname="report.tsv")
+    
+    logger.info ("evaluating model with combination=smoothed_voting. Predictions should be saved in a different folder")
+    res = model_e_inst2.evaluate_list([test_path]*4, combination="smoothed_voting", report_fname="report.tsv")
 
     logger.info ("evaluating model with combination=min_entropy. Predictions should be saved in a different folder")
     res = model_e_inst2.evaluate_list([test_path]*4, combination="min_entropy", report_fname="report.tsv")
-
 
