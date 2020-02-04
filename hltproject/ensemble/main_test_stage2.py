@@ -52,6 +52,7 @@ def main_with_retraining ():
     model5_anonymized3 = Model5(weight_folder_path="model_5_a3_stage2")
     model5_anonymized4 = Model5(weight_folder_path="model_5_a4_stage2")
 
+
     logger.info ("training model 9")
     model9_original.train(dev_path, val_path)
     model9_anonymized1.train(dev_path1, val_path1)
