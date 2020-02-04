@@ -60,12 +60,12 @@ def main_with_retraining ():
     model9_anonymized3.train(dev_path3, val_path3)
     model9_anonymized4.train(dev_path4, val_path4)
 
-    logger.info ("training model 5")
-    model5_original.train(dev_path, val_path)
-    model5_anonymized1.train(dev_path1, val_path1)
-    model5_anonymized2.train(dev_path2, val_path2)
-    model5_anonymized3.train(dev_path3, val_path3)
-    model5_anonymized4.train(dev_path4, val_path4)
+    #logger.info ("training model 5")
+    #model5_original.train(dev_path, val_path)
+    #model5_anonymized1.train(dev_path1, val_path1)
+    #model5_anonymized2.train(dev_path2, val_path2)
+    #model5_anonymized3.train(dev_path3, val_path3)
+    #model5_anonymized4.train(dev_path4, val_path4)
  
 
     combinations_to_test = ["mean", "smoothed_voting"]
