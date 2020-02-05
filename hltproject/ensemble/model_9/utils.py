@@ -1890,7 +1890,8 @@ class SquadRunner:
                     if self.gradient_accumulation_steps > 1:
                         loss = loss / gradient_accumulation_steps
                     print(f"loss: {loss}")
-                    loss.backward()
+                    #loss.backward()
+                    loss.mean().backward()
                     if (step + 1) % self.gradient_accumulation_steps == 0:
                         optimizer.step()
                         optimizer.zero_grad()
